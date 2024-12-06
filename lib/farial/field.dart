@@ -45,7 +45,7 @@ class _FieldState extends State<Field> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Title
+           
             Padding(
               padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.1),
               child: Text(
@@ -60,7 +60,7 @@ class _FieldState extends State<Field> {
               ),
             ),
 
-            // Search Container
+            
 
             Row(
               children: [
@@ -103,7 +103,7 @@ class _FieldState extends State<Field> {
 
             const SizedBox(height: 20),
 
-            // Specialities List
+           
             Padding(
               padding: EdgeInsets.symmetric(
                   vertical: 10,
@@ -192,7 +192,7 @@ void showFilterDialog(BuildContext context) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Title
+             
               Text(
                 "Filter Search",
                  style: GoogleFonts.outfit(
@@ -204,22 +204,22 @@ void showFilterDialog(BuildContext context) {
               ),
               const SizedBox(height: 20),
 
-              // Dropdown for Wilaya
+             
               _buildDropdownRow("Wilaya", "Algiers"),
               const SizedBox(height: 15),
 
-              // Dropdown for School
+             
               _buildDropdownRow("School", "ENSIA - The National School"),
               const SizedBox(height: 15),
 
-              // Dropdown for Speciality
+              
               _buildDropdownRow("Speciality", "Computer Science"),
               const SizedBox(height: 40),
 
-              // Done Button
+             
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop(); 
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF7C8FD6),
@@ -249,14 +249,14 @@ void showFilterDialog(BuildContext context) {
 }
 
 
-// Helper function for dropdown fields using Row
+
 Widget _buildDropdownRow(String label, String defaultValue) {
   return Row(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
-      // Label
+     
       Expanded(
-        flex: 3, // Adjust flex for proper spacing
+        flex: 3, 
         child: Text(
           label,
            style: GoogleFonts.outfit(
@@ -268,9 +268,9 @@ Widget _buildDropdownRow(String label, String defaultValue) {
         ),
       ),
 
-      // Dropdown
+ 
       Expanded(
-        flex: 7, // Adjust flex for proper spacing
+        flex: 7, 
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
@@ -282,9 +282,9 @@ Widget _buildDropdownRow(String label, String defaultValue) {
           child: DropdownButton<String>(
             value: defaultValue,
             isExpanded: true,
-            underline: const SizedBox(), // Remove underline
+            underline: const SizedBox(), 
             onChanged: (String? newValue) {
-              // Handle dropdown change
+             
             },
             items: <String>[defaultValue, "Option 2", "Option 3"]
                 .map<DropdownMenuItem<String>>((String value) {
