@@ -35,7 +35,7 @@ class _successState extends State<success> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(height: 20), // Add some spacing
+            const SizedBox(height: 20),
             Text(
               "Success",
               style: GoogleFonts.outfit(
@@ -46,7 +46,7 @@ class _successState extends State<success> {
                 ),
               ),
             ),
-            const SizedBox(height: 10), // Add some spacing
+            const SizedBox(height: 10), 
             Text(
               "Phone number verified!",
               style: GoogleFonts.outfit(
