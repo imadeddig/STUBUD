@@ -122,9 +122,9 @@ class _Interest3State extends State<Interest3> {
                     spacing: 12.0,
                     runSpacing: 12.0,
                     children: _labels.map((label) {
-                      // here like to make every string inside into like a container inside it a text
+                      
                       final bool isSelected = _selectedLabels.contains(
-                          label); // here to get if the current label is inside or no
+                          label); 
                       return GestureDetector(
                         onTap: () {
                           setState(() {
@@ -159,7 +159,7 @@ class _Interest3State extends State<Interest3> {
                           ),
                         ),
                       );
-                    }).toList(), // to make it a list of childern for the row
+                    }).toList(), 
                   ),
                 )
               ],
@@ -181,7 +181,7 @@ class _Interest3State extends State<Interest3> {
                   color: _selectedLabels.isEmpty
                       ? const Color(0XFF7C90D6)
                       : const Color(
-                          0XFF5A6EA5), // Lighter color if any is true, else darker
+                          0XFF5A6EA5), 
 
                   borderRadius: BorderRadius.circular(30),
                 ),
