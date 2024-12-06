@@ -121,7 +121,7 @@ class _SpecialityState extends State<Speciality> {
             ),
             const SizedBox(height: 12),
 
-            // Subtext
+        
             Padding(
               padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.1),
               child: Row(
