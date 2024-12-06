@@ -46,7 +46,7 @@ class _verify extends State<verify> {
                   ),
                 ),
               ),
-              const SizedBox(height: 8), // Space between the title and the row
+              const SizedBox(height: 8),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -95,7 +95,7 @@ class _verify extends State<verify> {
               Container(height: 45),
               Center(
                 child: SizedBox(
-                  width: 250, // Set the desired width for the entire row
+                  width: 250, 
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
