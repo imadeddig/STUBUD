@@ -23,9 +23,9 @@ class _SettingsState extends State<Settings> {
           Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
-                  const Explorebuddiespage()), // Replace `ImadPage` with your actual widget
+                  const Explorebuddiespage()), 
           (route) =>
-              false, // This removes all the previous routes from the stack
+              false,
         );
         break;
       case 1:
@@ -33,9 +33,9 @@ class _SettingsState extends State<Settings> {
           Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
-                  const Chatbud1()), // Replace `ImadPage` with your actual widget
+                  const Chatbud1()), 
           (route) =>
-              false, // This removes all the previous routes from the stack
+              false, 
         );
         break;
       case 2:
