@@ -146,7 +146,7 @@ class _beCool extends State<beCool> {
             ),
             const SizedBox(height: 15),
 
-            // Rule item
+           
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width * 0.05),
@@ -185,7 +185,7 @@ class _beCool extends State<beCool> {
             ),
             const SizedBox(height: 15),
 
-            // Rule item
+            
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width * 0.05),
@@ -224,7 +224,7 @@ class _beCool extends State<beCool> {
             ),
             const SizedBox(height: 15),
 
-            // Rule item
+            
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width * 0.05),
@@ -267,17 +267,17 @@ class _beCool extends State<beCool> {
                 decoration: BoxDecoration(
                   color: const Color(0xFF7C90D6),
                   borderRadius:
-                      BorderRadius.circular(40), // Radius for rounded corners
+                      BorderRadius.circular(40), 
                 ),
                 child: MaterialButton(
                   onPressed: () {
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
                         builder: (context) =>
-                            Explorebuddiespage(), // Replace with your desired screen/widget
+                            Explorebuddiespage(), 
                       ),
                       (route) =>
-                          false, // Removes all previous routes from the stack
+                          false, 
                     );
                   },
                   height: 55,
@@ -288,7 +288,7 @@ class _beCool extends State<beCool> {
                     "Let's Go",
                     style: GoogleFonts.outfit(
                         textStyle:
-                            const TextStyle(color: Colors.white)), // Text color
+                            const TextStyle(color: Colors.white)), 
                   ),
                 ),
               ),
