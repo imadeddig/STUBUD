@@ -19,7 +19,7 @@ class _FilterpageState extends State<Filterpage> {
     false,
     true,
     false
-  ]; // Default: Afternoon selected
+  ]; 
   List<String> selectedMethods = [];
   String purpose = "Study Group Sessions";
   List<String> communicationMethods = [];
@@ -53,14 +53,14 @@ class _FilterpageState extends State<Filterpage> {
                   padding: const EdgeInsets.only(right: 30, top: 0),
                   child: GestureDetector(
                     onTap: () {
-  // Add your action here when "Done" is pressed
+ 
   print("Done pressed!");
    Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
-                  const Explorebuddiespage()), // Replace `ImadPage` with your actual widget
+                  const Explorebuddiespage()),
           (route) =>
-              false, // This removes all the previous routes from the stack
+              false, 
         );
 },
 
@@ -75,11 +75,11 @@ class _FilterpageState extends State<Filterpage> {
                 )
               ],
             ),
-            // Divider line at the bottom of AppBar
+            
             const Divider(
-              thickness: 0, // Thickness of the line
-              height: 0, // Height of the divider
-              color: Color.fromARGB(53, 0, 0, 0), // Line color
+              thickness: 0, 
+              height: 0, 
+              color: Color.fromARGB(53, 0, 0, 0), 
             ),
           ],
         ),
@@ -117,7 +117,7 @@ class _FilterpageState extends State<Filterpage> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Age range
+              
 
               Text("What would you want their age range to be?",
                   style: GoogleFonts.outfit(
@@ -166,7 +166,7 @@ class _FilterpageState extends State<Filterpage> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Distance
+             
               Text("Distance (how far are they)",
                   style: GoogleFonts.outfit(
                     fontSize: 14,
@@ -188,19 +188,19 @@ class _FilterpageState extends State<Filterpage> {
 
               SliderTheme(
                 data: SliderThemeData(
-                  trackHeight: 2.0, // Adjust this value to lower the height
+                  trackHeight: 2.0,
                   thumbShape: RoundSliderThumbShape(
                       enabledThumbRadius:
-                          10), // Adjust the thumb size if needed
+                          10), 
                   overlayShape: RoundSliderOverlayShape(overlayRadius: 18),
-                  activeTrackColor: Color(0xFF7C90D6), // Active track color
+                  activeTrackColor: Color(0xFF7C90D6), 
                   inactiveTrackColor:
-                      const Color.fromARGB(33, 0, 0, 0), // Inactive track color
-                  thumbColor: Color(0xFF7C90D6), // Thumb color
+                      const Color.fromARGB(33, 0, 0, 0), 
+                  thumbColor: Color(0xFF7C90D6), 
                   overlayColor:
-                      Color(0xFF7C90D6), // Overlay color when thumb is touched
+                      Color(0xFF7C90D6), 
                   valueIndicatorColor:
-                      Color(0xFF7C90D6), // Value indicator color
+                      Color(0xFF7C90D6), 
                 ),
                 child: Slider(
                   value: distance,
@@ -218,7 +218,7 @@ class _FilterpageState extends State<Filterpage> {
 
               GestureDetector(
                 onTap: () {
-                  // Handle field selection
+                  
                 Navigator.of(context).pushNamed("field");
                 },
                 child: Container(
@@ -257,10 +257,10 @@ class _FilterpageState extends State<Filterpage> {
                   ),
                 ),
               ),
-              // Gesture Detector for "school/university"
+              
               GestureDetector(
                 onTap: () {
-                  // Handle school/university selection
+                  
                   print("object");
                 },
                 child: Container(
@@ -295,11 +295,11 @@ class _FilterpageState extends State<Filterpage> {
                   ),
                 ),
               ),
-              // Gesture Detector for "interests"
+             
               GestureDetector(
                 onTap: () {
-                  // Handle interests selection
-                  print("object");
+                 
+                  
                 },
                 child: Container(
                   height: 40,
@@ -333,7 +333,7 @@ class _FilterpageState extends State<Filterpage> {
                   ),
                 ),
               ),
-              // Gesture Detector for "languages spoken"
+              
               GestureDetector(
                 onTap: () {
                   Navigator.of(context).pushNamed("field");
@@ -372,7 +372,7 @@ class _FilterpageState extends State<Filterpage> {
               ),
               const SizedBox(height: 50),
 
-              // Study Methods
+            
               Text("Study Times",
                   style: GoogleFonts.outfit(
                     fontSize: 14,
@@ -380,12 +380,12 @@ class _FilterpageState extends State<Filterpage> {
                     color: const Color.fromARGB(116, 0, 0, 0),
                   )),
               SingleChildScrollView(
-                scrollDirection: Axis.horizontal, // Allow horizontal scrolling
+                scrollDirection: Axis.horizontal, 
                 child: Row(
                   children: ["Morning", "Afternoon", "Evening", "Night Owl"]
                       .map((method) => Padding(
                             padding: const EdgeInsets.only(
-                                right: 10.0), // Add spacing between items
+                                right: 10.0), 
                             child: studyMethodChip(method),
                           ))
                       .toList(),
@@ -445,7 +445,7 @@ class _FilterpageState extends State<Filterpage> {
                   ]
                       .map((method) => Padding(
                             padding: const EdgeInsets.only(
-                                right: 10.0), // Add spacing between items
+                                right: 10.0), 
                             child: studyMethodChip(method),
                           ))
                       .toList(),
@@ -510,7 +510,7 @@ class _FilterpageState extends State<Filterpage> {
 
               const SizedBox(height: 120),
 
-              // Purpose and Goals
+            
             ],
           ),
         ),
@@ -536,8 +536,8 @@ class _FilterpageState extends State<Filterpage> {
           border: Border.all(
             color: selectedGender == gender
                 ? Color(0xFF7C90D6)
-                : const Color.fromARGB(255, 88, 88, 88), // Border color
-            width: 1, // Border width
+                : const Color.fromARGB(255, 88, 88, 88), 
+            width: 1,
           ),
         ),
         child: Text(
@@ -582,7 +582,7 @@ class _FilterpageState extends State<Filterpage> {
       },
       checkmarkColor: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10), // Rounded corners
+        borderRadius: BorderRadius.circular(10), 
       ),
       elevation: 2.0, 
     );
