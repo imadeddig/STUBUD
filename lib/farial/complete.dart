@@ -37,12 +37,12 @@ class _complete extends State<complete> {
     required String month,
     required String year,
   }) {
-   
+    
     if (day.isEmpty || month.isEmpty || year.isEmpty) {
       return false;
     }
 
-    
+   
     int? dayInt = int.tryParse(day);
     int? monthInt = int.tryParse(month);
     int? yearInt = int.tryParse(year);
@@ -51,7 +51,7 @@ class _complete extends State<complete> {
       return false; 
     }
 
-    
+   
     if (monthInt < 1 || monthInt > 12) {
       return false; 
     }
@@ -62,7 +62,7 @@ class _complete extends State<complete> {
       return false; 
     }
 
-    
+   
     try {
       DateTime date = DateTime(yearInt, monthInt, dayInt);
       return date.day == dayInt &&
@@ -74,7 +74,7 @@ class _complete extends State<complete> {
   }
 
   String? validatePhone(String? phone) {
-    
+   
     final RegExp phoneRegex = RegExp(r'^\d{10,15}$');
     if (phone == null) {
       return "Phone number is required.";
@@ -85,6 +85,7 @@ class _complete extends State<complete> {
   }
 
   String? validateUsername(String? username) {
+ 
     final RegExp usernameRegex = RegExp(r'^[a-zA-Z0-9_]{4,20}$');
     if (username == null) {
       return "Username is required.";
@@ -92,6 +93,7 @@ class _complete extends State<complete> {
       return "Username must be 4-20 characters and contain only letters, numbers, and underscores.";
     }
     return null; 
+  }
 
   String? validatePassword(String? password) {
     if (password == null || password.isEmpty) {
@@ -110,7 +112,7 @@ class _complete extends State<complete> {
     } else if (password.text != pass) {
       return "Passwords do not match.";
     }
-    return null; 
+    return null;
   }
 
   @override
