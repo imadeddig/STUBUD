@@ -56,7 +56,7 @@ class _buddyProfileState extends State<buddyProfile> {
               floating: false,
               backgroundColor: Colors.transparent,
               flexibleSpace: FlexibleSpaceBar(
-                titlePadding: EdgeInsets.only(left: 20, top: 100, bottom: 10),
+                titlePadding: const EdgeInsets.only(left: 20, top: 100, bottom: 10),
                 title: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -87,7 +87,7 @@ class _buddyProfileState extends State<buddyProfile> {
                             color: Colors.black
                                 .withOpacity(0.9), 
                             offset:
-                                Offset(1, 1), 
+                                const Offset(1, 1), 
                             blurRadius: 50, 
                           ),
                         ],
@@ -159,7 +159,7 @@ class _buddyProfileState extends State<buddyProfile> {
                                     BorderRadius.circular(20), 
                                 side: const BorderSide(
                                   color:  Color.fromARGB(
-                                      66, 0, 0, 0), l
+                                      66, 0, 0, 0), 
                                   width: 1, 
                                 ),
                               ),
@@ -178,7 +178,7 @@ class _buddyProfileState extends State<buddyProfile> {
                                 borderRadius:
                                     BorderRadius.circular(20), 
                                 side: const BorderSide(
-                                  color: const Color.fromARGB(
+                                  color: Color.fromARGB(
                                       66, 0, 0, 0), 
                                   width: 1, 
                                 ),
@@ -298,7 +298,7 @@ class _buddyProfileState extends State<buddyProfile> {
                                 borderRadius:
                                     BorderRadius.circular(20), 
                                 side:const BorderSide(
-                                  color: const Color.fromARGB(
+                                  color: Color.fromARGB(
                                       66, 0, 0, 0),
                                   width: 1, 
                                 ),
@@ -318,7 +318,7 @@ class _buddyProfileState extends State<buddyProfile> {
                                 borderRadius:
                                     BorderRadius.circular(20), 
                                 side:const BorderSide(
-                                  color: const Color.fromARGB(
+                                  color: Color.fromARGB(
                                       66, 0, 0, 0), 
                                   width: 1, 
                                 ),
@@ -329,7 +329,7 @@ class _buddyProfileState extends State<buddyProfile> {
                           ],
                         ),
 
-                         SizedBox(
+                         const SizedBox(
                           height: 15,
                         ),
 
@@ -378,7 +378,7 @@ class _buddyProfileState extends State<buddyProfile> {
                                 borderRadius:
                                     BorderRadius.circular(20), 
                                 side:const BorderSide(
-                                  color: const Color.fromARGB(
+                                  color: Color.fromARGB(
                                       66, 0, 0, 0),
                                   width: 1, 
                                 ),
@@ -443,7 +443,7 @@ class _buddyProfileState extends State<buddyProfile> {
                                 borderRadius:
                                     BorderRadius.circular(10),
                                 side:const BorderSide(
-                                  color: const Color.fromARGB(
+                                  color: Color.fromARGB(
                                       66, 0, 0, 0), 
                                   width: 1, 
                                 ),
@@ -499,7 +499,7 @@ class _buddyProfileState extends State<buddyProfile> {
                                 borderRadius:
                                     BorderRadius.circular(10),
                                 side:const BorderSide(
-                                  color: const Color.fromARGB(
+                                  color: Color.fromARGB(
                                       66, 0, 0, 0), 
                                   width: 1, 
                                 ),
@@ -533,18 +533,18 @@ class _buddyProfileState extends State<buddyProfile> {
                                 style: GoogleFonts.outfit(
                                     color: const Color.fromARGB(255, 0, 0, 0)),
                               ),
-                              backgroundColor: Color.fromARGB(22, 124, 143,
+                              backgroundColor: const Color.fromARGB(22, 124, 143,
                                   214), 
                               shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.circular(10), 
-                                side: BorderSide(
-                                  color: const Color.fromARGB(
+                                side: const BorderSide(
+                                  color: Color.fromARGB(
                                       66, 0, 0, 0), 
                                   width: 1,
                                 ),
                               ),
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 8),
                             ),
                           ],
