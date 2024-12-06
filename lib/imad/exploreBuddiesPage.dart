@@ -27,18 +27,18 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
-                  const Chatbud1()), // Replace `ImadPage` with your actual widget
+                  const Chatbud1()), 
           (route) =>
-              false, // This removes all the previous routes from the stack
+              false, 
         );
         break;
       case 2:
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
-                  const Settings()), // Replace `ImadPage` with your actual widget
+                  const Settings()), 
           (route) =>
-              false, // This removes all the previous routes from the stack
+              false,  
         );
         break;
     }
@@ -75,8 +75,8 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
     _scrollController
         .animateTo(
       0, // Position to scroll to
-      duration: const Duration(milliseconds: 500), // Smooth scroll duration
-      curve: Curves.easeInOut, // Scroll animation curve
+      duration: const Duration(milliseconds: 500), 
+      curve: Curves.easeInOut, 
     )
         .then((_) {
       // Perform actions after scrolling to the top
