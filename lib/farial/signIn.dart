@@ -19,12 +19,12 @@ class _signIn extends State<signIn> {
    String? termsErr="";
 
   bool validateEmail(String email) {
-  // Regular Expression for validating an email
+
   final RegExp emailRegex = RegExp(
     r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
   );
 
-  // Check if the email matches the regex
+ 
   return emailRegex.hasMatch(email);
 }
 
@@ -185,7 +185,7 @@ class _signIn extends State<signIn> {
                         decoration: BoxDecoration(
                           color: const Color(0xFF7C90D6),
                           borderRadius:
-                              BorderRadius.circular(40), // Radius for rounded corners
+                              BorderRadius.circular(40), 
                         ),
                         child: MaterialButton(
                           onPressed: () {
@@ -224,7 +224,7 @@ class _signIn extends State<signIn> {
                             "Connect",
                             style: GoogleFonts.outfit(
                                 textStyle:
-                                    const TextStyle(color: Colors.white)), // Text color
+                                    const TextStyle(color: Colors.white)), 
                           ),
                         ),
                       ),
