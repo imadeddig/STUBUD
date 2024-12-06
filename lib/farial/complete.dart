@@ -37,63 +37,61 @@ class _complete extends State<complete> {
     required String month,
     required String year,
   }) {
-    // Check if inputs are numeric
+   
     if (day.isEmpty || month.isEmpty || year.isEmpty) {
       return false;
     }
 
-    // Parse values to integers
+    
     int? dayInt = int.tryParse(day);
     int? monthInt = int.tryParse(month);
     int? yearInt = int.tryParse(year);
 
     if (dayInt == null || monthInt == null || yearInt == null) {
-      return false; // Inputs are not numeric
+      return false; 
     }
 
-    // Check ranges
+    
     if (monthInt < 1 || monthInt > 12) {
-      return false; // Invalid month
+      return false; 
     }
     if (dayInt < 1 || dayInt > 31) {
-      return false; // Invalid day
+      return false; 
     }
     if (yearInt < 1900 || yearInt > DateTime.now().year) {
-      return false; // Year is out of range
+      return false; 
     }
 
-    // Check if the day is valid for the specific month and year
+    
     try {
       DateTime date = DateTime(yearInt, monthInt, dayInt);
       return date.day == dayInt &&
           date.month == monthInt &&
           date.year == yearInt;
     } catch (e) {
-      return false; // Invalid date
+      return false; 
     }
   }
 
   String? validatePhone(String? phone) {
-    // Ensure the phone number is numeric and has 10-15 digits.
+    
     final RegExp phoneRegex = RegExp(r'^\d{10,15}$');
     if (phone == null) {
       return "Phone number is required.";
     } else if (!phoneRegex.hasMatch(phone)) {
       return "Enter a valid phone number (10-15 digits).";
     }
-    return null; // Valid input
+    return null; 
   }
 
   String? validateUsername(String? username) {
-    // Ensure username is 4-20 characters long and contains only alphanumeric characters.
     final RegExp usernameRegex = RegExp(r'^[a-zA-Z0-9_]{4,20}$');
     if (username == null) {
       return "Username is required.";
     } else if (!usernameRegex.hasMatch(username)) {
       return "Username must be 4-20 characters and contain only letters, numbers, and underscores.";
     }
-    return null; // Valid input
-  }
+    return null; 
 
   String? validatePassword(String? password) {
     if (password == null || password.isEmpty) {
@@ -112,7 +110,7 @@ class _complete extends State<complete> {
     } else if (password.text != pass) {
       return "Passwords do not match.";
     }
-    return null; // Valid input
+    return null; 
   }
 
   @override
@@ -401,7 +399,7 @@ class _complete extends State<complete> {
                           Text(
                             error != ""
                                 ? error!
-                                : "", // Display the error message if it exists
+                                : "", 
                             style: const TextStyle(
                                 color: Colors.red, fontSize: 14),
                           )
@@ -451,7 +449,7 @@ class _complete extends State<complete> {
                       Text(
                         dateErr != ""
                             ? dateErr
-                            : "", // Display the error message if it exists
+                            : "", 
                         style: const TextStyle(color: Colors.red, fontSize: 14),
                       ),
                       const SizedBox(height: 8),
@@ -461,7 +459,7 @@ class _complete extends State<complete> {
                           decoration: BoxDecoration(
                             color: const Color(0xFF7C90D6),
                             borderRadius: BorderRadius.circular(
-                                40), // Radius for rounded corners
+                                40), 
                           ),
                           child: MaterialButton(
                             onPressed: () {
@@ -496,7 +494,7 @@ class _complete extends State<complete> {
                                 } else if (_selectedGender == null) {
                                   setState(() {
                                     error =
-                                        "Please select your gender."; // Update the error message
+                                        "Please select your gender."; 
                                   });
                                 }
                               }
@@ -509,7 +507,7 @@ class _complete extends State<complete> {
                               "Next",
                               style: GoogleFonts.outfit(
                                   textStyle: const TextStyle(
-                                      color: Colors.white)), // Text color
+                                      color: Colors.white)), 
                             ),
                           ),
                         ),
@@ -552,7 +550,7 @@ class _complete extends State<complete> {
       {bool isWide = false}) {
     return SizedBox(
       height: 45,
-      width: isWide ? 60 : 40, // Wider input for "YYYY"
+      width: isWide ? 60 : 40, 
       child: TextField(
         onChanged: (value) {
           if (hintText != "YYYY") {
