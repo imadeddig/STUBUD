@@ -33,10 +33,10 @@ class _LoginState extends State<Login> {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
-                  const Explorebuddiespage()), // Replace `ImadPage` with your actual widget
+                  const Explorebuddiespage()), 
           (route) =>
-              false, // This removes all the previous routes from the stack
-        ); // Navigate on success.
+              false,
+        ); 
     }
   }
 
@@ -59,9 +59,9 @@ class _LoginState extends State<Login> {
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute(builder: (context) =>const Welcome()),
-              ModalRoute.withName('/'), // Keeps the initial route.
+              ModalRoute.withName('/'), 
             );
-            // Navigate back to the previous screen.
+           
           },
         ),
       ),
