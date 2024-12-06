@@ -205,7 +205,7 @@ class _Interest4State extends State<Interest4> {
                               ),
                             ),
                             SizedBox(
-                                width: screenWidth * 0.02), // Add space here
+                                width: screenWidth * 0.02), 
                           ],
                         );
                       }).toList(),
@@ -297,7 +297,7 @@ class _Interest4State extends State<Interest4> {
                               ),
                             ),
                             SizedBox(
-                                width: screenWidth * 0.02), // Add space here
+                                width: screenWidth * 0.02), 
                           ],
                         );
                       }).toList(),
@@ -389,7 +389,7 @@ class _Interest4State extends State<Interest4> {
                               ),
                             ),
                             SizedBox(
-                                width: screenWidth * 0.02), // Add space here
+                                width: screenWidth * 0.02), 
                           ],
                         );
                       }).toList(),
@@ -481,7 +481,7 @@ class _Interest4State extends State<Interest4> {
                               ),
                             ),
                             SizedBox(
-                                width: screenWidth * 0.02), // Add space here
+                                width: screenWidth * 0.02), 
                           ],
                         );
                       }).toList(),
@@ -506,7 +506,7 @@ class _Interest4State extends State<Interest4> {
                   color: __selectedLabels3.isEmpty
                       ? const Color(0XFF7C90D6)
                       : const Color(
-                          0XFF5A6EA5), // Lighter color if any is true, else darker
+                          0XFF5A6EA5), 
 
                   borderRadius: BorderRadius.circular(30),
                 ),
