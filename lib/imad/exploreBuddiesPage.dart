@@ -79,10 +79,10 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
       curve: Curves.easeInOut, 
     )
         .then((_) {
-      // Perform actions after scrolling to the top
+      
       Future.delayed(const Duration(milliseconds: 0), () {
         setState(() {
-          // Reset to enable sliding again
+          
         });
       });
     });
@@ -96,13 +96,13 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen height
+   
     double screenHeight = MediaQuery.of(context).size.height;
 
-    // Get AppBar height
+    
     double appBarHeight = AppBar().preferredSize.height;
 
-    // Get BottomNavigationBar height
+    
     double bottomBarHeight = kBottomNavigationBarHeight;
 
     var currentUser = _users[_currentUserIndex];
@@ -145,8 +145,8 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
             child: IconButton(
               icon: const Icon(
                 Icons.settings,
-                size: 30, // Icon size
-                color: Color.fromARGB(255, 0, 0, 0), // Icon color
+                size: 30, 
+                color: Color.fromARGB(255, 0, 0, 0), 
               ),
               onPressed: () {
                 Navigator.push(
@@ -233,7 +233,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                         children: [
                           const SizedBox(height: 20),
 
-                          // Bio
+                          
                           Text(
                             'Bio',
                             style: GoogleFonts.outfit(
@@ -248,7 +248,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                             style: GoogleFonts.outfit(fontSize: 16),
                           ),
                           const SizedBox(height: 20),
-                          // Interests
+                          
                           Text(
                             'Interests',
                             style: GoogleFonts.outfit(
@@ -270,14 +270,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      20), // Border radius
+                                      20), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1,
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -291,14 +291,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      20), // Border radius
+                                      20), 
                                   side: const BorderSide(
                                     color: const Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -312,14 +312,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      20), // Border radius
+                                      20), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -333,14 +333,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      20), // Border radius
+                                      20), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -354,14 +354,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      20), // Border radius
+                                      20), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -395,14 +395,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      20), // Border radius
+                                      20), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -416,14 +416,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      20), // Border radius
+                                      20), 
                                   side: const BorderSide(
                                     color: const Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -437,14 +437,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      20), // Border radius
+                                      20), 
                                   side: const BorderSide(
                                     color: const Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -478,14 +478,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      20), // Border radius
+                                      20), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -499,14 +499,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      20), // Border radius
+                                      20), 
                                   side: const BorderSide(
                                     color: const Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -520,14 +520,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      20), // Border radius
+                                      20), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -536,7 +536,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                             ],
                           ),
 
-                          // Additional Photos
+                          
 
                           const SizedBox(height: 10),
                           Image.asset(
@@ -566,14 +566,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      10), // Border radius
+                                      10), 
                                   side: const BorderSide(
                                     color: const Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -587,14 +587,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      10), // Border radius
+                                      10), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0),
+                                    width: 1,
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -624,14 +624,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      10), // Border radius
+                                      10), 
                                   side: const BorderSide(
                                     color: const Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0),
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -645,14 +645,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      10), // Border radius
+                                      10), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0),
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -666,14 +666,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: Color.fromARGB(22, 124, 143,
-                                    214), // Background color of the chip
+                                    214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      10), // Border radius
+                                      10),
                                   side: BorderSide(
                                     color: const Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0),
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: EdgeInsets.symmetric(
@@ -703,14 +703,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      10), // Border radius
+                                      10), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -724,14 +724,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      10), // Border radius
+                                      10), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1,
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -745,14 +745,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      10), // Border radius
+                                      10), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -782,14 +782,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      10), // Border radius
+                                      10), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -819,14 +819,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      10), // Border radius
+                                      10), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1,
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -840,14 +840,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      10), // Border radius
+                                      10), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0), 
+                                    width: 1,
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -861,14 +861,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                                           const Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 backgroundColor: const Color.fromARGB(22, 124,
-                                    143, 214), // Background color of the chip
+                                    143, 214), 
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
-                                      10), // Border radius
+                                      10), 
                                   side: const BorderSide(
                                     color: Color.fromARGB(
-                                        66, 0, 0, 0), // Border color
-                                    width: 1, // Border width
+                                        66, 0, 0, 0),
+                                    width: 1, 
                                   ),
                                 ),
                                 padding: const EdgeInsets.symmetric(
@@ -878,7 +878,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                           ),
 
                           const SizedBox(height: 20),
-                          // Location
+                          
                           Text(
                             'Algiers, Algeria\n~ 20km away',
                             style: GoogleFonts.outfit(
@@ -897,30 +897,30 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
             ],
           ),
           Positioned(
-            top: 16.0, // Distance from the top
-            right: 16.0, // Distance from the right
+            top: 16.0, 
+            right: 16.0, 
             child: Container(
               decoration: BoxDecoration(
                 color: const Color.fromARGB(
-                    0, 255, 255, 255), // White background for the icon
-                shape: BoxShape.circle, // Circular shape
+                    0, 255, 255, 255), 
+                shape: BoxShape.circle, 
                 boxShadow: [
                   BoxShadow(
                     color: const Color.fromARGB(255, 255, 255, 255)
-                        .withOpacity(0.4), // Shadow color with opacity
-                    blurRadius: 8.0, // Spread of the shadow
-                    offset: Offset(3, 3), // Offset from the widget
+                        .withOpacity(0.4), 
+                    blurRadius: 8.0, 
+                    offset: Offset(3, 3), 
                   ),
                 ],
               ),
               child: IconButton(
                 onPressed: () {
                   _showNextUser();
-                  // Define your action here
+
                 },
                 icon: const Icon(Icons.close, size: 30),
                 color:
-                    const Color.fromARGB(255, 255, 255, 255), // Black "X" icon
+                    const Color.fromARGB(255, 255, 255, 255), 
               ),
             ),
           ),
@@ -949,7 +949,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                     _scrollToTopAndShowNextUser();
 
                     setState(() {
-                      isFinished = true; // Reset to enable sliding again.
+                      isFinished = true; 
                     });
                   });
                 },
