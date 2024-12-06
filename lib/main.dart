@@ -26,8 +26,8 @@ import 'package:stubudmvp/chatbud/chatbud1.dart';
 
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized
-  // await Firebase.initializeApp(); // Initialize Firebase
+  WidgetsFlutterBinding.ensureInitialized(); 
+
 
   runApp(const App());
 }
