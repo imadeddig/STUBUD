@@ -45,7 +45,7 @@ class _WelcomeState extends State<Welcome> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Adding  here
+                 
 
                   Text.rich(
                     TextSpan(children: [
@@ -110,11 +110,11 @@ class _WelcomeState extends State<Welcome> {
                       ),
                       textColor: Colors.white,
                       child: Row(
-                        // Row is used here to align the text in both axes
+                        
                         mainAxisAlignment:
-                            MainAxisAlignment.center, // Center horizontally
+                            MainAxisAlignment.center, 
                         crossAxisAlignment:
-                            CrossAxisAlignment.center, // Center vertically
+                            CrossAxisAlignment.center,
                         children: [
                           Text(
                             "Create Account",
