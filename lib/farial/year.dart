@@ -46,7 +46,7 @@ class _YearState extends State<Year> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Title
+        
             Padding(
               padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.1),
               child: Text(
@@ -63,7 +63,6 @@ class _YearState extends State<Year> {
 
           
 
-            // years List
             Padding(
               padding: EdgeInsets.symmetric(
                 vertical: 10,
