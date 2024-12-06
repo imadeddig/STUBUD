@@ -228,7 +228,7 @@ class _Interest1State extends State<Interest1> {
                   color: _selected5.isEmpty
                       ? const Color(0XFF7C90D6)
                       : const Color(
-                          0XFF5A6EA5), // Lighter color if any is true, else darker
+                          0XFF5A6EA5), 
 
                   borderRadius: BorderRadius.circular(30),
                 ),
