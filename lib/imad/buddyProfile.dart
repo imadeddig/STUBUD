@@ -32,16 +32,12 @@ class _buddyProfileState extends State<buddyProfile> {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen height
+    
     double screenHeight = MediaQuery.of(context).size.height;
     var isFinished = false;
-    // Get AppBar height
+    
     double appBarHeight = AppBar().preferredSize.height;
-
-    // Get BottomNavigationBar height
     double bottomBarHeight = kBottomNavigationBarHeight;
-
-    // Calculate the height for the expanded image
     double expandedImageHeight =
         screenHeight - appBarHeight - bottomBarHeight - 100;
     return Scaffold(
@@ -51,12 +47,10 @@ class _buddyProfileState extends State<buddyProfile> {
       body: Stack(children: [
         CustomScrollView(
           slivers: [
-            // Sliver AppBar
-
-            SliverAppBar(
+                        SliverAppBar(
               scrolledUnderElevation: 0,
               elevation: 0,
-              expandedHeight: screenHeight/2 , // Height of the image
+              expandedHeight: screenHeight/2 , 
               pinned: true,
               snap: false,
               floating: false,
@@ -75,10 +69,10 @@ class _buddyProfileState extends State<buddyProfile> {
                           shadows: [
                             Shadow(
                               color: Colors.black.withOpacity(
-                                  0.9), // Shadow color with opacity
+                                  0.9), 
                               offset: const Offset(
-                                  5, 5), // Horizontal and vertical offset
-                              blurRadius: 10, // How blurry the shadow should be
+                                  5, 5), 
+                              blurRadius: 10, 
                             ),
                           ]),
                     ),
@@ -91,10 +85,10 @@ class _buddyProfileState extends State<buddyProfile> {
                         shadows: [
                           Shadow(
                             color: Colors.black
-                                .withOpacity(0.9), // Shadow color with opacity
+                                .withOpacity(0.9), 
                             offset:
-                                Offset(1, 1), // Horizontal and vertical offset
-                            blurRadius: 50, // How blurry the shadow should be
+                                Offset(1, 1), 
+                            blurRadius: 50, 
                           ),
                         ],
                       ),
@@ -103,7 +97,7 @@ class _buddyProfileState extends State<buddyProfile> {
                 ),
                 background: ClipRRect(
                   borderRadius:
-                      BorderRadius.circular(16), // Adjust radius as needed
+                      BorderRadius.circular(16),  
                   child: Image.asset(
                     'images/ae95db324a7d14c53b4d54357312d477.jpg',
                     fit: BoxFit.cover,
@@ -111,7 +105,7 @@ class _buddyProfileState extends State<buddyProfile> {
                 ),
               ),
             ),
-            // SliverList for the scrollable content
+            
             SliverList(
               delegate: SliverChildListDelegate(
                 [
@@ -123,7 +117,7 @@ class _buddyProfileState extends State<buddyProfile> {
                       children: [
                         const SizedBox(height: 20),
 
-                        // Bio
+                        
                         Text(
                           'Bio',
                           style: GoogleFonts.outfit(
@@ -162,11 +156,11 @@ class _buddyProfileState extends State<buddyProfile> {
                                   214), // Background color of the chip
                               shape: RoundedRectangleBorder(
                                 borderRadius:
-                                    BorderRadius.circular(20), // Border radius
+                                    BorderRadius.circular(20), 
                                 side: const BorderSide(
                                   color:  Color.fromARGB(
-                                      66, 0, 0, 0), // Border color
-                                  width: 1, // Border width
+                                      66, 0, 0, 0), l
+                                  width: 1, 
                                 ),
                               ),
                               padding: const EdgeInsets.symmetric(
@@ -179,14 +173,14 @@ class _buddyProfileState extends State<buddyProfile> {
                                     color: const Color.fromARGB(255, 0, 0, 0)),
                               ),
                               backgroundColor: const Color.fromARGB(22, 124, 143,
-                                  214), // Background color of the chip
+                                  214), 
                               shape: RoundedRectangleBorder(
                                 borderRadius:
-                                    BorderRadius.circular(20), // Border radius
+                                    BorderRadius.circular(20), 
                                 side: const BorderSide(
                                   color: const Color.fromARGB(
-                                      66, 0, 0, 0), // Border color
-                                  width: 1, // Border width
+                                      66, 0, 0, 0), 
+                                  width: 1, 
                                 ),
                               ),
                               padding: const EdgeInsets.symmetric(
@@ -219,14 +213,14 @@ class _buddyProfileState extends State<buddyProfile> {
                                     color: const Color.fromARGB(255, 0, 0, 0)),
                               ),
                               backgroundColor:const  Color.fromARGB(22, 124, 143,
-                                  214), // Background color of the chip
+                                  214), 
                               shape: RoundedRectangleBorder(
                                 borderRadius:
-                                    BorderRadius.circular(20), // Border radius
+                                    BorderRadius.circular(20), 
                                 side: const BorderSide(
                                   color:  Color.fromARGB(
-                                      66, 0, 0, 0), // Border color
-                                  width: 1, // Border width
+                                      66, 0, 0, 0), 
+                                  width: 1, 
                                 ),
                               ),
                               padding: const EdgeInsets.symmetric(
@@ -239,14 +233,14 @@ class _buddyProfileState extends State<buddyProfile> {
                                     color: const Color.fromARGB(255, 0, 0, 0)),
                               ),
                               backgroundColor:const Color.fromARGB(22, 124, 143,
-                                  214), // Background color of the chip
+                                  214), 
                               shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.circular(20), // Border radius
                                 side: const BorderSide(
                                   color:  Color.fromARGB(
-                                      66, 0, 0, 0), // Border color
-                                  width: 1, // Border width
+                                      66, 0, 0, 0), 
+                                  width: 1, 
                                 ),
                               ),
                               padding: const EdgeInsets.symmetric(
@@ -286,7 +280,7 @@ class _buddyProfileState extends State<buddyProfile> {
                                 side: const BorderSide(
                                   color:  Color.fromARGB(
                                       66, 0, 0, 0), // Border color
-                                  width: 1, // Border width
+                                  width: 1, 
                                 ),
                               ),
                               padding:const EdgeInsets.symmetric(
@@ -299,7 +293,7 @@ class _buddyProfileState extends State<buddyProfile> {
                                     color: const Color.fromARGB(255, 0, 0, 0)),
                               ),
                               backgroundColor:const Color.fromARGB(22, 124, 143,
-                                  214), // Background color of the chip
+                                  214), 
                               shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.circular(20), // Border radius
