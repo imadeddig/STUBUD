@@ -16,6 +16,10 @@ dependencies:
   page_transition: ^2.0.5
   image_picker: ^1.1.2
   awesome_dialog: ^3.2.1
+  sqflite: ^2.4.1
+  path: ^1.8.2
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.7
 
 dev_dependencies:
   flutter_test:

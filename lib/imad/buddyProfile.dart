@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../imad/filterPage.dart';
-import 'package:swipeable_button_view/swipeable_button_view.dart';
 
 class buddyProfile extends StatefulWidget {
   const buddyProfile({super.key});

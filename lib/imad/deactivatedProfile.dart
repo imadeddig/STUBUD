@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../imad/filterPage.dart';
 
 class DeactivatedProfileScreen extends StatefulWidget {
+  const DeactivatedProfileScreen({super.key});
+
   @override
   _DeactivatedProfileScreenState createState() =>
       _DeactivatedProfileScreenState();
@@ -42,7 +43,7 @@ class _DeactivatedProfileScreenState extends State<DeactivatedProfileScreen> {
               style: GoogleFonts.outfit(
                 fontSize: 40, // Responsive font size
               ),
-              children: [
+              children: const [
                 TextSpan(
                   text: 'S',
                   style: TextStyle(
@@ -113,12 +114,12 @@ class _DeactivatedProfileScreenState extends State<DeactivatedProfileScreen> {
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(
                         vertical: 20, horizontal: 60),
-                    backgroundColor: Color(0xFF7C90D6),
+                    backgroundColor: const Color(0xFF7C90D6),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100),
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Get Back In',
                     style: TextStyle(
                       fontSize: 16,

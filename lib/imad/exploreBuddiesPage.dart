@@ -6,45 +6,14 @@ import 'package:stubudmvp/imad/filterPage.dart';
 import 'package:swipeable_button_view/swipeable_button_view.dart';
 
 class Explorebuddiespage extends StatefulWidget {
-  const Explorebuddiespage({super.key});
+  final int userID;
+  const Explorebuddiespage ({super.key, required this.userID});
 
   @override
   State<Explorebuddiespage> createState() => _ExplorebuddiespageState();
 }
 
 class _ExplorebuddiespageState extends State<Explorebuddiespage> {
-  Widget styledText(String text) {
-    return Text(
-      text,
-      style: GoogleFonts.outfit(
-        color: const Color.fromARGB(133, 0, 0, 0),
-        fontSize: 15,
-        fontWeight: FontWeight.normal,
-      ),
-    );
-  }
-
-  Widget styledChip(String label, double borderRadius) {
-    // Custom algorithm for border radius based on input factor
-    return Chip(
-      label: Text(
-        label,
-        style: GoogleFonts.outfit(
-          color: const Color.fromARGB(255, 0, 0, 0),
-        ),
-      ),
-      backgroundColor: const Color.fromARGB(22, 124, 143, 214),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(borderRadius),
-        side: const BorderSide(
-          color: Color.fromARGB(66, 0, 0, 0),
-          width: 1,
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-    );
-  }
-
   int _currentIndex = 0;
 
   void _onItemTapped(int index) {
@@ -57,14 +26,20 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
         break;
       case 1:
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const Chatbud1()),
-          (route) => false,
+          MaterialPageRoute(
+              builder: (context) =>
+                   Chatbud1(userID:widget.userID)), 
+          (route) =>
+              false, 
         );
         break;
       case 2:
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const Settings()),
-          (route) => false,
+          MaterialPageRoute(
+              builder: (context) =>
+                   Settings(userID:widget.userID)), 
+          (route) =>
+              false,  
         );
         break;
     }
@@ -101,12 +76,15 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
     _scrollController
         .animateTo(
       0, // Position to scroll to
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
+      duration: const Duration(milliseconds: 500), 
+      curve: Curves.easeInOut, 
     )
         .then((_) {
+      
       Future.delayed(const Duration(milliseconds: 0), () {
-        setState(() {});
+        setState(() {
+          
+        });
       });
     });
   }
@@ -119,10 +97,13 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
 
   @override
   Widget build(BuildContext context) {
+   
     double screenHeight = MediaQuery.of(context).size.height;
 
+    
     double appBarHeight = AppBar().preferredSize.height;
 
+    
     double bottomBarHeight = kBottomNavigationBarHeight;
 
     var currentUser = _users[_currentUserIndex];
@@ -165,14 +146,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
             child: IconButton(
               icon: const Icon(
                 Icons.tune_outlined,
-                size: 30,
-                color: Color.fromARGB(255, 0, 0, 0),
+                size: 30, 
+                color: Color.fromARGB(255, 0, 0, 0), 
               ),
               onPressed: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const Filterpage()));
+                        builder: (context) =>  Filterpage(userID:widget.userID)));
               },
             ),
           ),
@@ -225,7 +206,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                           shadows: [
                             Shadow(
                               color: Colors.black.withOpacity(0.9),
-                              offset: Offset(1, 1),
+                              offset: const Offset(1, 1),
                               blurRadius: 50,
                             ),
                           ],
@@ -252,6 +233,8 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 20),
+
+                          
                           Text(
                             'Bio',
                             style: GoogleFonts.outfit(
@@ -266,104 +249,637 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                             style: GoogleFonts.outfit(fontSize: 16),
                           ),
                           const SizedBox(height: 20),
-                          styledText('Interests'),
+                          
+                          Text(
+                            'Interests',
+                            style: GoogleFonts.outfit(
+                              color: const Color.fromARGB(133, 0, 0, 0),
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
                           const SizedBox(height: 10),
                           Wrap(
                             spacing: 8.0,
                             runSpacing: 8.0,
                             children: [
-                              styledChip('coding', 20),
-                              styledChip('sports', 20),
-                              styledChip('film making', 20),
-                              styledChip('Medecine', 20),
-                              styledChip('Artificial Intelligence', 20)
+                              Chip(
+                                label: Text(
+                                  'Coding',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1,
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'Sports',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'Film Making',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'Medecine',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'Artificial Intelligence',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
                             ],
                           ),
+
                           const SizedBox(
                             height: 15,
                           ),
-                          styledText('Values'),
+
+                          Text(
+                            'Value',
+                            style: GoogleFonts.outfit(
+                              color: const Color.fromARGB(133, 0, 0, 0),
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
                           const SizedBox(height: 10),
                           Wrap(
                             spacing: 8.0,
                             runSpacing: 8.0,
                             children: [
-                              styledChip('Integrity', 20),
-                              styledChip('Innovation', 20),
-                              styledChip('Honesty', 20)
+                              Chip(
+                                label: Text(
+                                  'Integrity',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'innovation',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'honesty',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
                             ],
                           ),
-                          SizedBox(
+
+                          const SizedBox(
                             height: 15,
                           ),
-                          styledText('Languages Spoken'),
+
+                          Text(
+                            'Languages Spoken',
+                            style: GoogleFonts.outfit(
+                              color: const Color.fromARGB(133, 0, 0, 0),
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
                           const SizedBox(height: 10),
                           Wrap(
                             spacing: 8.0,
                             runSpacing: 8.0,
                             children: [
-                              styledChip('Korean', 20),
-                              styledChip('English', 20),
-                              styledChip('Japanesse', 20)
+                              Chip(
+                                label: Text(
+                                  'Korean',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'English',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'Japanesse',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
                             ],
                           ),
+
+                          
+
                           const SizedBox(height: 10),
                           Image.asset(
                             'images/becool.png',
                             fit: BoxFit.cover,
                           ),
                           const SizedBox(height: 10),
-                          styledText('Study Times'),
+
+                          Text(
+                            'Study Times',
+                            style: GoogleFonts.outfit(
+                              color: const Color.fromARGB(133, 0, 0, 0),
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
                           const SizedBox(height: 10),
                           Wrap(
                             spacing: 8.0,
                             runSpacing: 8.0,
                             children: [
-                              styledChip('Night', 10),
-                              styledChip('Evening', 10)
+                              Chip(
+                                label: Text(
+                                  'Night',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'Evening',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0),
+                                    width: 1,
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
                             ],
                           ),
-                          styledText('Preferred Study Methods'),
+
+                          Text(
+                            'Preffered Study Methods',
+                            style: GoogleFonts.outfit(
+                              color: const Color.fromARGB(133, 0, 0, 0),
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
                           const SizedBox(height: 10),
                           Wrap(
                             spacing: 8.0,
                             runSpacing: 8.0,
                             children: [
-                              styledChip('Group Discussions', 10),
-                              styledChip('Finding Study Buddies', 10),
-                              styledChip('Learning others Fields', 10)
+                              Chip(
+                                label: Text(
+                                  'group discussions',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0),
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'finding study buddies',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0),
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'learning others field',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124, 143,
+                                    214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10),
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0),
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
                             ],
                           ),
-                          styledText('Purposes and Goals'),
+
+                          Text(
+                            'Purposes and goals',
+                            style: GoogleFonts.outfit(
+                              color: const Color.fromARGB(133, 0, 0, 0),
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
                           const SizedBox(height: 10),
                           Wrap(
                             spacing: 8.0,
                             runSpacing: 8.0,
                             children: [
-                              styledChip('Networking', 10),
-                              styledChip('Finding Study Buddies', 10),
-                              styledChip('Learning Others Fields', 10),
+                              Chip(
+                                label: Text(
+                                  'networking',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'finding study buddies',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1,
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'learning others field',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
                             ],
                           ),
-                          styledText('Communication Methods'),
-                          const SizedBox(height: 10),
-                          Wrap(
-                            spacing: 8.0,
-                            runSpacing: 8.0,
-                            children: [styledChip('Coffee Shops', 10)],
+
+                          Text(
+                            'Communication Methods',
+                            style: GoogleFonts.outfit(
+                              color: const Color.fromARGB(133, 0, 0, 0),
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                            ),
                           ),
-                          styledText('Academic Strengths'),
                           const SizedBox(height: 10),
                           Wrap(
                             spacing: 8.0,
                             runSpacing: 8.0,
                             children: [
-                              styledChip('Mathematics', 10),
-                              styledChip('Problem Solving', 10),
-                              styledChip('Physics', 10)
+                              Chip(
+                                label: Text(
+                                  'Coffee Shope',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
                             ],
                           ),
+
+                          Text(
+                            'Academic Strenghts',
+                            style: GoogleFonts.outfit(
+                              color: const Color.fromARGB(133, 0, 0, 0),
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            children: [
+                              Chip(
+                                label: Text(
+                                  'Mahematics',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1,
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'Problem Solving',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0), 
+                                    width: 1,
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                              Chip(
+                                label: Text(
+                                  'Physics',
+                                  style: GoogleFonts.outfit(
+                                      color:
+                                          const Color.fromARGB(255, 0, 0, 0)),
+                                ),
+                                backgroundColor: const Color.fromARGB(22, 124,
+                                    143, 214), 
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), 
+                                  side: const BorderSide(
+                                    color: Color.fromARGB(
+                                        66, 0, 0, 0),
+                                    width: 1, 
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                              ),
+                            ],
+                          ),
+
                           const SizedBox(height: 20),
+                          
                           Text(
                             'Algiers, Algeria\n~ 20km away',
                             style: GoogleFonts.outfit(
@@ -382,27 +898,30 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
             ],
           ),
           Positioned(
-            top: 16.0,
-            right: 16.0,
+            top: 16.0, 
+            right: 16.0, 
             child: Container(
               decoration: BoxDecoration(
-                color: const Color.fromARGB(0, 255, 255, 255),
-                shape: BoxShape.circle,
+                color: const Color.fromARGB(
+                    0, 255, 255, 255), 
+                shape: BoxShape.circle, 
                 boxShadow: [
                   BoxShadow(
                     color: const Color.fromARGB(255, 255, 255, 255)
-                        .withOpacity(0.4),
-                    blurRadius: 8.0,
-                    offset: Offset(3, 3),
+                        .withOpacity(0.4), 
+                    blurRadius: 8.0, 
+                    offset: const Offset(3, 3), 
                   ),
                 ],
               ),
               child: IconButton(
                 onPressed: () {
                   _showNextUser();
+
                 },
                 icon: const Icon(Icons.close, size: 30),
-                color: const Color.fromARGB(255, 255, 255, 255),
+                color:
+                    const Color.fromARGB(255, 255, 255, 255), 
               ),
             ),
           ),
@@ -424,13 +943,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                   setState(() {
                     isFinished = false;
                   });
-                  _showFilterDialog(context);
+ _showFilterDialog(context);
                   Future.delayed(const Duration(milliseconds: 0), () {
+                   
                     _showNextUser();
                     _scrollToTopAndShowNextUser();
 
                     setState(() {
-                      isFinished = true;
+                      isFinished = true; 
                     });
                   });
                 },
@@ -502,7 +1022,7 @@ void _showFilterDialog(BuildContext context) {
               SizedBox(height: MediaQuery.of(context).size.height * 0.02),
               Center(
                 child: Text("Congrats ! \n You have made a Study Buddy!?",
-                    textAlign: TextAlign.center,
+                textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                         textStyle: const TextStyle(
                       color: Color.fromRGBO(0, 0, 0, 0.6),
@@ -528,8 +1048,8 @@ void _showFilterDialog(BuildContext context) {
                 child: Text(
                   "Start a Conversation",
                   style: GoogleFonts.outfit(
-                    textStyle: TextStyle(
-                      fontSize: 12,
+                    textStyle: const TextStyle(
+                      fontSize:12,
                       color: Colors.white,
                     ),
                   ),
@@ -546,7 +1066,7 @@ void _showFilterDialog(BuildContext context) {
                 child: Text(
                   "keep exploring",
                   style: GoogleFonts.outfit(
-                    textStyle: TextStyle(color: Colors.black),
+                    textStyle: const TextStyle(color: Colors.black),
                   ),
                 ),
               ),

@@ -1,8 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../bloc/change_password_bloc.dart';
 import '../styles/style.dart';
 
-class ChangePasswordScreen extends StatelessWidget {
-  const ChangePasswordScreen({super.key});
+class ChangePasswordScreen extends StatefulWidget {
+    final int userID;
+  const ChangePasswordScreen ({super.key, required this.userID});
+  @override
+  _ChangePasswordScreenState createState() => _ChangePasswordScreenState();
+}
+
+class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Dispose of the controllers when the widget is disposed.
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,110 +37,102 @@ class ChangePasswordScreen extends StatelessWidget {
           },
         ),
       ),
-      resizeToAvoidBottomInset: true, // Ensures resizing when the keyboard appears
-      body: SingleChildScrollView( // Makes the content scrollable
+      resizeToAvoidBottomInset: true,
+      body: SingleChildScrollView(
         child: Padding(
           padding: AppStyles.screenPadding,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Change Password',
-                style: AppStyles.headerTextStyle,
-              ),
-              const Text(
-                '''Passwords must be at least 6 characters, and should include a combination of numbers and letters.''',
-              ),
-              const SizedBox(height: 45),
-              const Text(
-                'Current Password',
-                style: AppStyles.listSubtitleTextStyle,
-              ),
-              const TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: 'Enter current password',
-                  hintStyle: AppStyles.subtitleTextStyle,
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'New Password',
-                style: AppStyles.listSubtitleTextStyle,
-              ),
-              const TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: 'Enter new password',
-                  hintStyle: AppStyles.subtitleTextStyle,
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Confirm New Password',
-                style: AppStyles.listSubtitleTextStyle,
-              ),
-              const TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: 'Confirm new password',
-                  hintStyle: AppStyles.subtitleTextStyle,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+          child: BlocProvider(
+            create: (context) => ChangePasswordBloc(),
+            child: BlocListener<ChangePasswordBloc, ChangePasswordState>(
+              listener: (context, state) {
+                if (state is ChangePasswordSuccess) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Password changed successfully')),
+                  );
+                  Navigator.pop(context);
+                } else if (state is ChangePasswordFailure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: ${state.error}')),
+                  );
+                }
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      // Handle forget password action
-                      debugPrint("Forget Password tapped!");
-                    },
-                    child: const Text(
-                      "Forget Password?",
-                      style: TextStyle(
-                        fontFamily: 'Outfit',
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline,
+                  const Text('Change Password', style: AppStyles.headerTextStyle),
+                  const SizedBox(height: 45),
+                  _buildPasswordField(
+                    context,
+                    'Current Password',
+                    _currentPasswordController,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildPasswordField(
+                    context,
+                    'New Password',
+                    _newPasswordController,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildPasswordField(
+                    context,
+                    'Confirm New Password',
+                    _confirmPasswordController,
+                  ),
+                  const SizedBox(height: 30),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 30),
+                      child: BlocBuilder<ChangePasswordBloc, ChangePasswordState>(
+                        builder: (context, state) {
+                          return ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppStyles.accentColor,
+                              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 80),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                            ),
+                            onPressed: state is ChangePasswordLoading
+                                ? null
+                                : () {
+                                    context.read<ChangePasswordBloc>().add(
+                                          SubmitChangePassword(
+                                            userID: widget.userID,
+                                            currentPassword: _currentPasswordController.text,
+                                            newPassword: _newPasswordController.text,
+                                            confirmPassword: _confirmPasswordController.text,
+                                          ),
+                                        );
+                                  },
+                            child: state is ChangePasswordLoading
+                                ? const CircularProgressIndicator(color: Colors.white)
+                                : const Text('Change Password', style: AppStyles.buttonTextStyle),
+                          );
+                        },
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
-              // Adding an Expanded widget to push the button to the bottom
-              // You can use `Spacer()` as well, but `Expanded` ensures the button
-              // takes the remaining space.
-              Container(
-                height: MediaQuery.of(context).size.height * 0.2, // Ensure there's enough space for scrolling
-              ),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 30),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppStyles.accentColor,
-                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 80),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                    ),
-                    onPressed: () {
-                      // Add your save password logic here
-                    },
-                    child: const Text(
-                      'Change Password',
-                      style: AppStyles.buttonTextStyle,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
-}
 
+  Widget _buildPasswordField(BuildContext context, String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: AppStyles.listSubtitleTextStyle),
+        TextField(
+          controller: controller,
+          obscureText: true,
+          decoration: InputDecoration(
+            hintText: 'Enter $label',
+            hintStyle: AppStyles.subtitleTextStyle,
+          ),
+        ),
+      ],
+    );
+  }
+}

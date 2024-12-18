@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stubudmvp/aiteur/screens/edit_account_info.dart';
 import 'package:stubudmvp/chatbud/chatbud1.dart';
+import 'package:stubudmvp/database/StudentProfile.dart';
 import 'package:stubudmvp/imad/exploreBuddiesPage.dart';
 import 'package:stubudmvp/farial/delete.dart';
 
 class Settings extends StatefulWidget {
-  const Settings({super.key});
+    final int userID;
+  const Settings({super.key, required this.userID});
 
   @override
   State<Settings> createState() => _SettingsState();
@@ -14,6 +17,24 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   bool isStudyBuddiesSelected = true;
   int _currentIndex = 2;
+
+  String username = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserProfile();
+  }
+
+  Future<void> _fetchUserProfile() async {
+    final profile = await StudentProfileDB.getStudentProfileByUserID(widget.userID);
+    if (profile != null) {
+      setState(() {
+        username = profile['username'] ?? 'unknown_user';
+      });
+    }
+  }
+
 
   void _onItemTapped(int index) {
     setState(() {
@@ -24,7 +45,7 @@ class _SettingsState extends State<Settings> {
           Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
-                  const Explorebuddiespage()), 
+                  Explorebuddiespage(userID:widget.userID)), 
           (route) =>
               false,
         );
@@ -34,7 +55,7 @@ class _SettingsState extends State<Settings> {
           Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
-                  const Chatbud1()), 
+                   Chatbud1(userID:widget.userID)), 
           (route) =>
               false, 
         );
@@ -119,7 +140,7 @@ class _SettingsState extends State<Settings> {
               ),
             ),
             Text(
-              "@imaded",
+              "@$username",
               style: GoogleFonts.outfit(
                 textStyle: const TextStyle(
                   fontSize: 12,
@@ -138,7 +159,7 @@ class _SettingsState extends State<Settings> {
               _buildResponsiveProfileRow(context, "Search preferences", false, () {}),
               _buildResponsiveProfileRow(context, "Language", false, () {}),
               _buildResponsiveProfileRow(context, "Personal info settings", true, () {
-                Navigator.of(context).pushNamed("editinfoscreen");
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>EditAccountInfoScreen(userID: widget.userID,)));
               }),
             ]),
             const SizedBox(height: 25),

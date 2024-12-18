@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stubudmvp/imad/exploreBuddiesPage.dart';
-import '../imad/deactivatedProfile.dart';
 
 class Filterpage extends StatefulWidget {
-  const Filterpage({super.key});
+   final int userID;
+  const Filterpage ({super.key, required this.userID});
 
   @override
   State<Filterpage> createState() => _FilterpageState();
@@ -58,7 +58,7 @@ class _FilterpageState extends State<Filterpage> {
    Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
-                  const Explorebuddiespage()),
+                   Explorebuddiespage(userID:widget.userID)),
           (route) =>
               false, 
         );
@@ -138,7 +138,7 @@ class _FilterpageState extends State<Filterpage> {
               ),
 
               SliderTheme(
-                data: SliderThemeData(
+                data: const SliderThemeData(
                   trackHeight: 2.0, 
                   thumbShape: RoundSliderThumbShape(
                       enabledThumbRadius:
@@ -146,7 +146,7 @@ class _FilterpageState extends State<Filterpage> {
                   overlayShape: RoundSliderOverlayShape(overlayRadius: 18),
                   activeTrackColor: Color(0xFF7C90D6), 
                   inactiveTrackColor:
-                      const Color.fromARGB(33, 0, 0, 0), 
+                      Color.fromARGB(33, 0, 0, 0), 
                   thumbColor: Color(0xFF7C90D6), 
                   overlayColor:
                       Color(0xFF7C90D6), 
@@ -187,7 +187,7 @@ class _FilterpageState extends State<Filterpage> {
               ),
 
               SliderTheme(
-                data: SliderThemeData(
+                data: const SliderThemeData(
                   trackHeight: 2.0,
                   thumbShape: RoundSliderThumbShape(
                       enabledThumbRadius:
@@ -195,7 +195,7 @@ class _FilterpageState extends State<Filterpage> {
                   overlayShape: RoundSliderOverlayShape(overlayRadius: 18),
                   activeTrackColor: Color(0xFF7C90D6), 
                   inactiveTrackColor:
-                      const Color.fromARGB(33, 0, 0, 0), 
+                      Color.fromARGB(33, 0, 0, 0), 
                   thumbColor: Color(0xFF7C90D6), 
                   overlayColor:
                       Color(0xFF7C90D6), 
@@ -214,7 +214,7 @@ class _FilterpageState extends State<Filterpage> {
                   },
                 ),
               ),
-              SizedBox(height: 70),
+              const SizedBox(height: 70),
 
               GestureDetector(
                 onTap: () {
@@ -225,6 +225,18 @@ class _FilterpageState extends State<Filterpage> {
                   height: 40,
                   width: double.infinity,
                   alignment: Alignment.centerLeft,
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      top: BorderSide(
+                        color: Color.fromARGB(50, 0, 0, 0),
+                        width: 1.0,
+                      ),
+                      bottom: BorderSide(
+                        color: Color.fromARGB(50, 0, 0, 0),
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -235,25 +247,13 @@ class _FilterpageState extends State<Filterpage> {
                           color: const Color.fromARGB(50, 0, 0, 0),
                         ),
                       ),
-                      Row(
+                      const Row(
                         children: [
                           Text('select'),
                           Icon(Icons.arrow_forward_ios, size: 16),
                         ],
                       ),
                     ],
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(
-                        color: const Color.fromARGB(50, 0, 0, 0),
-                        width: 1.0,
-                      ),
-                      bottom: BorderSide(
-                        color: const Color.fromARGB(50, 0, 0, 0),
-                        width: 1.0,
-                      ),
-                    ),
                   ),
                 ),
               ),
@@ -267,6 +267,14 @@ class _FilterpageState extends State<Filterpage> {
                   height: 40,
                   width: double.infinity,
                   alignment: Alignment.centerLeft,
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Color.fromARGB(50, 0, 0, 0),
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -277,21 +285,13 @@ class _FilterpageState extends State<Filterpage> {
                           color: const Color.fromARGB(50, 0, 0, 0),
                         ),
                       ),
-                      Row(
+                      const Row(
                         children: [
                           Text('select'),
                           Icon(Icons.arrow_forward_ios, size: 16),
                         ],
                       ),
                     ],
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: const Color.fromARGB(50, 0, 0, 0),
-                        width: 1.0,
-                      ),
-                    ),
                   ),
                 ),
               ),
@@ -305,6 +305,14 @@ class _FilterpageState extends State<Filterpage> {
                   height: 40,
                   width: double.infinity,
                   alignment: Alignment.centerLeft,
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Color.fromARGB(50, 0, 0, 0),
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -315,21 +323,13 @@ class _FilterpageState extends State<Filterpage> {
                           color: const Color.fromARGB(50, 0, 0, 0),
                         ),
                       ),
-                      Row(
+                      const Row(
                         children: [
                           Text('select'),
                           Icon(Icons.arrow_forward_ios, size: 16),
                         ],
                       ),
                     ],
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: const Color.fromARGB(50, 0, 0, 0),
-                        width: 1.0,
-                      ),
-                    ),
                   ),
                 ),
               ),
@@ -342,6 +342,14 @@ class _FilterpageState extends State<Filterpage> {
                   height: 40,
                   width: double.infinity,
                   alignment: Alignment.centerLeft,
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Color.fromARGB(50, 0, 0, 0),
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -352,21 +360,13 @@ class _FilterpageState extends State<Filterpage> {
                           color: const Color.fromARGB(50, 0, 0, 0),
                         ),
                       ),
-                      Row(
+                      const Row(
                         children: [
                           Text('select'),
                           Icon(Icons.arrow_forward_ios, size: 16),
                         ],
                       ),
                     ],
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: const Color.fromARGB(50, 0, 0, 0),
-                        width: 1.0,
-                      ),
-                    ),
                   ),
                 ),
               ),
@@ -392,7 +392,7 @@ class _FilterpageState extends State<Filterpage> {
                 ),
               ),
 
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
 
@@ -422,7 +422,7 @@ class _FilterpageState extends State<Filterpage> {
                 ),
               ),
 
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
 
@@ -451,7 +451,7 @@ class _FilterpageState extends State<Filterpage> {
                       .toList(),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
 
@@ -476,7 +476,7 @@ class _FilterpageState extends State<Filterpage> {
                 ),
               ),
 
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
 
@@ -504,7 +504,7 @@ class _FilterpageState extends State<Filterpage> {
                 ),
               ),
 
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
 
@@ -530,12 +530,12 @@ class _FilterpageState extends State<Filterpage> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 9),
         decoration: BoxDecoration(
           color: selectedGender == gender
-              ? Color(0xFF7C90D6)
+              ? const Color(0xFF7C90D6)
               : const Color.fromARGB(10, 0, 0, 0),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selectedGender == gender
-                ? Color(0xFF7C90D6)
+                ? const Color(0xFF7C90D6)
                 : const Color.fromARGB(255, 88, 88, 88), 
             width: 1,
           ),
@@ -564,8 +564,8 @@ class _FilterpageState extends State<Filterpage> {
         ),
       ),
       selected: selectedMethods.contains(method),
-      selectedColor: Color(0xFF7C90D6), 
-      backgroundColor: Color.fromARGB(
+      selectedColor: const Color(0xFF7C90D6), 
+      backgroundColor: const Color.fromARGB(
           22, 124, 143, 214), 
       padding: const EdgeInsets.symmetric(
           horizontal: 28, vertical: 10), 

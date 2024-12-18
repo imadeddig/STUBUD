@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stubudmvp/interest5.dart';
 
 class Interest4 extends StatefulWidget {
-  const Interest4({super.key});
+ final int userID;
+
+  const Interest4({super.key, required this.userID});
 
   @override
   State<Interest4> createState() => _Interest4State();
@@ -46,7 +49,7 @@ class _Interest4State extends State<Interest4> {
             padding: const EdgeInsets.only(right: 17),
             child: TextButton(
               onPressed: () {
-                Navigator.of(context).pushNamed("interest5");
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Interest5(userID:widget.userID)));
               },
               child: Text(
                 "Skip",
@@ -497,7 +500,7 @@ class _Interest4State extends State<Interest4> {
             child: InkWell(
               onTap: () {
                 if (__selectedLabels3.isNotEmpty) {
-                  Navigator.of(context).pushNamed("interest5");
+                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Interest5(userID:widget.userID)));
                 }
               },
               child: Container(

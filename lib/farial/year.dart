@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stubudmvp/database/StudentProfile.dart';
 
 class Year extends StatefulWidget {
-  const Year({super.key});
+   final int userID;
+
+  const Year({super.key, required this.userID});
 
   @override
   State<Year> createState() => _YearState();
@@ -95,10 +98,18 @@ class _YearState extends State<Year> {
                 child: Column(
                   children: years.map((year) {
                     return GestureDetector(
-                      onTap: () {
+                      onTap: () async{
                         setState(() {
                           selectedYear = year;
                         });
+
+                         Map<String, dynamic> updatedProfile = {
+                                      'level': selectedYear,
+                                         };
+
+                                    int rowsAffected = await StudentProfileDB
+                                        .updateStudentProfile(
+                                            widget.userID, updatedProfile);
                       },
                       child: Container(
                         child: Row(

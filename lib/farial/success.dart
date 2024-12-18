@@ -3,7 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import '../farial/complete.dart';
 
 class success extends StatefulWidget {
-  const success({super.key});
+
+  final int userID;
+  const success ({super.key, required this.userID});
 
   @override
   State<success> createState() => _successState();
@@ -75,7 +77,7 @@ class _successState extends State<success> {
                     child: IconButton(
                       icon: const Icon(Icons.arrow_forward, color: Colors.black),
                       onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const complete()));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>complete(userID: widget.userID), ),);
                       },
                     ),
                   ),

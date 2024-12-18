@@ -1,19 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stubudmvp/database/StudentProfile.dart';
+import 'package:stubudmvp/interest1.dart';
+
 
 class Infor extends StatefulWidget {
-  const Infor({super.key});
+  final int userID;
+
+  const Infor({super.key, required this.userID});
 
   @override
   State<Infor> createState() => _InforState();
 }
 
 class _InforState extends State<Infor> {
+  Map<String, dynamic>? studentProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStudentProfile();
+  }
+
+  // Load the student profile based on the userID
+  Future<void> _loadStudentProfile() async {
+    final profile = await StudentProfileDB.getStudentProfileByUserID(widget.userID);
+    setState(() {
+      studentProfile = profile;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     double verticalPadding = screenHeight * 0.012;
+
+    if (studentProfile == null) {
+      // Show a loading indicator until the profile is fetched
+      return Scaffold(
+        appBar: AppBar(
+          iconTheme: const IconThemeData(color: Colors.black),
+          elevation: 0,
+          toolbarHeight: 50,
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -31,20 +64,19 @@ class _InforState extends State<Infor> {
                 child: Column(
                   children: [
                     Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: (screenWidth * 0.1)),
+                      padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.1)),
                       child: Text(
                         "You are officially in !",
                         style: GoogleFonts.outfit(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black),
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
                     Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: (screenWidth * 0.14)),
+                      padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.14)),
                       child: Text(
                         "based on your progress account, here is what we know about you so far !",
                         textAlign: TextAlign.center,
@@ -89,7 +121,7 @@ class _InforState extends State<Infor> {
                     ),
                   ),
                   Text(
-                    "Imad Eddine",
+                    studentProfile?['username'] ?? 'Loading...', // Use the dynamic name
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
@@ -110,7 +142,7 @@ class _InforState extends State<Infor> {
                     ),
                   ),
                   Text(
-                    "27 september 2004",
+                    studentProfile?['dateOfBirth'] ?? 'Loading...', // Dynamic Date of Birth
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
@@ -131,7 +163,7 @@ class _InforState extends State<Infor> {
                     ),
                   ),
                   Text(
-                    "Male",
+                    studentProfile?['gender'] ?? 'Loading...', // Dynamic Gender
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
@@ -171,7 +203,7 @@ class _InforState extends State<Infor> {
                     ),
                   ),
                   Text(
-                    "The National Higher School Of Artificial Intelligence - 2nd",
+                    studentProfile?['school'] ?? 'Loading...', // Dynamic School
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -191,7 +223,7 @@ class _InforState extends State<Infor> {
                     ),
                   ),
                   Text(
-                    "mathematics/computer sicence",
+                    studentProfile?['field'] ?? 'Loading...', // Dynamic Field
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -211,7 +243,7 @@ class _InforState extends State<Infor> {
                     ),
                   ),
                   Text(
-                    "cycle superieure",
+                    studentProfile?['level'] ?? 'Loading...', // Dynamic Level
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -230,7 +262,7 @@ class _InforState extends State<Infor> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.10)),
               child: Text(
-                "information bellow can’t be changed for security measures. let us know more about who you are now !",
+                "Information below can’t be changed for security measures. Let us know more about who you are now!",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(
                   fontWeight: FontWeight.w500,
@@ -239,13 +271,11 @@ class _InforState extends State<Infor> {
                 ),
               ),
             ),
-            
             Container(
-              padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.33) , vertical: (screenHeight * 0.03)),
-              
+              padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.33), vertical: (screenHeight * 0.03)),
               child: MaterialButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed("specialite");
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Interest1(userID:widget.userID)));
                 },
                 height: 55,
                 color: const Color(0XFF7C90D6),

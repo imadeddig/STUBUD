@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import '../screens/change_password.dart';
 import '../styles/style.dart';
 
-class EditPasswordScreen extends StatelessWidget {
-  const EditPasswordScreen({super.key});
+class EditPasswordScreen extends StatefulWidget {
+  final int userID;
+  const EditPasswordScreen({super.key, required this.userID});
 
+  @override
+  State<EditPasswordScreen> createState() => _EditPasswordScreenState();
+}
+
+class _EditPasswordScreenState extends State<EditPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: AppBar(
+      appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
@@ -44,13 +50,14 @@ class EditPasswordScreen extends StatelessWidget {
               title: const Text(
                 'Change Password',
                 style: AppStyles.listTitleTextStyle,
-                
               ),
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => ChangePasswordScreen(userID: widget.userID),
+                  ),
                 );
               },
             ),

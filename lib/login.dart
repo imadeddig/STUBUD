@@ -2,12 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stubudmvp/database/StudentProfile.dart';
 import 'package:stubudmvp/imad/exploreBuddiesPage.dart';
 import 'dart:ui';
-
 import 'package:stubudmvp/welcome.dart';
-
-
+// Import your database helper
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -28,15 +27,43 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
-  void _handleLogin(BuildContext context) {
+  void _handleLogin(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
+      String emailOrUsername = _emailController.text.trim();
+      String password = _passwordController.text.trim();
+
+      // Check if user exists and validate password from the database
+      var user =
+          await StudentProfileDB.getUserByEmailOrUsername(emailOrUsername);
+
+      if (user != null && user['password'] == password) {
+        // Login successful, navigate to the next screen
+        final userID =
+            await StudentProfileDB.getCurrentUserID(_emailController.text);
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) =>
-                  const Explorebuddiespage()), 
-          (route) =>
-              false,
-        ); 
+            builder: (context) => Explorebuddiespage(userID:userID!),
+          ),
+          (route) => false,
+        );
+      } else {
+        // Incorrect email/username or password
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Login Error"),
+            content: const Text("Incorrect username/email or password."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 
@@ -58,10 +85,9 @@ class _LoginState extends State<Login> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) =>const Welcome()),
-              ModalRoute.withName('/'), 
+              MaterialPageRoute(builder: (context) => const Welcome()),
+              ModalRoute.withName('/'),
             );
-           
           },
         ),
       ),
@@ -131,7 +157,9 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
-  }Widget _buildTitle() {
+  }
+
+  Widget _buildTitle() {
     return Text.rich(
       TextSpan(children: [
         _buildStyledText("S", 50, FontWeight.w700, const Color(0xFF7C90D6)),
@@ -207,6 +235,7 @@ class _LoginState extends State<Login> {
           ],
         ),
       );
+
   Widget _buildLoginButton(double screenWidth) {
     return Center(
       child: SizedBox(
@@ -248,7 +277,9 @@ class _LoginState extends State<Login> {
             const Expanded(child: Divider(color: Colors.white)),
           ],
         ),
-      );Widget _socialIcons(double screenWidth) => Container(
+      );
+
+  Widget _socialIcons(double screenWidth) => Container(
         padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.2),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -308,7 +339,7 @@ class _LoginState extends State<Login> {
                 ),
                 children: <TextSpan>[
                   TextSpan(
-                    text: "Terms and Condtions",
+                    text: "Terms and Conditions",
                     style: GoogleFonts.outfit(
                       fontSize: 9,
                       fontWeight: FontWeight.w500,
@@ -350,5 +381,32 @@ class _LoginState extends State<Login> {
                 ])),
       ),
     );
+  }
+}
+
+class UserModel with ChangeNotifier {
+  int? _userID;
+
+  int? get userID => _userID;
+
+  // Set userID manually
+  void setUserID(int userID) {
+    _userID = userID;
+    notifyListeners();
+  }
+
+  Future<void> fetchUserID(String text) async {
+    try {
+      final fetchedUserID = await StudentProfileDB.getCurrentUserID(
+          text); // Get userID based on email
+      if (fetchedUserID != null) {
+        _userID = fetchedUserID; // Update the _userID with fetched value
+        notifyListeners(); // Notify listeners of the change
+      } else {
+        print("No user found for the given email.");
+      }
+    } catch (error) {
+      print("Error fetching userID: $error");
+    }
   }
 }

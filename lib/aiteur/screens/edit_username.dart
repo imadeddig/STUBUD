@@ -1,10 +1,33 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../styles/style.dart';
+import '../../bloc/edit_username_bloc.dart';
 
-class EditUsernameScreen extends StatelessWidget {
-  const EditUsernameScreen({super.key});
+class EditUsernameScreen extends StatefulWidget {
+    final int userID;
+  const EditUsernameScreen ({super.key, required this.userID});
 
+  @override
+  _EditUsernameScreenState createState() => _EditUsernameScreenState();
+}
+
+class _EditUsernameScreenState extends State<EditUsernameScreen> {
+  TextEditingController usernameController = TextEditingController();
+  // Variable to store the user ID
+
+
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Call getID() once during initialization to get the userID
+    context.read<EditUsernameBloc>().loadUsername(widget.userID);
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +44,13 @@ class EditUsernameScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-             Navigator.pop(context);
+              // Get the updated username from the TextField
+              final newUsername = usernameController.text;
+
+              // Update the username via BLoC with the userID
+              context.read<EditUsernameBloc>().updateUsername(newUsername, widget.userID);
+
+              Navigator.pop(context); // Go back after updating
             },
             child: Text(
               'Done',
@@ -30,60 +59,60 @@ class EditUsernameScreen extends StatelessWidget {
           ),
         ],
       ),
-      body:SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Padding(
-        padding: AppStyles.screenPadding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-          'Username',
-          style: AppStyles.headerTextStyle,
-           ),
-           const Text(
-            '''usernames are best used for fast and simple access to your stubud account, updates will let you know search for students using their username''',
+          padding: AppStyles.screenPadding,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Username', style: AppStyles.headerTextStyle),
+              const Text(
+                '''Usernames are best used for fast and simple access to your account. Updates will let others search for you using your username.''',
                 style: AppStyles.subtitleTextStyle,
-           ),
-           const SizedBox(height:45 ),
-            const Text(
-              'Username',
-              style: AppStyles.listSubtitleTextStyle,
-              
-            ),
-            const TextField(
-              decoration: InputDecoration(
-                hintText: 'Enter your username',
-                hintStyle: AppStyles.subtitleTextStyle,
-                border: UnderlineInputBorder(),
               ),
-            ),
-            const SizedBox(height: 10),
-            RichText(
-              text: TextSpan(
-                text: 'You can change your username once every two months. ',
-                style: AppStyles.listSubtitleTextStyle,
-                children: [
-                  TextSpan(
-                    text: 'Learn more',
-                    style: const TextStyle(
-                      color: Colors.black, // Link color
-                      fontFamily: 'Outfit',
-                      decoration: TextDecoration.underline, // Underlined
+              const SizedBox(height: 45),
+              const Text('Username', style: AppStyles.listSubtitleTextStyle),
+
+              // Use BlocBuilder to listen to the state changes
+              BlocBuilder<EditUsernameBloc, String>(
+                builder: (context, username) {
+                  usernameController.text = username;
+
+                  return TextField(
+                    controller: usernameController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter your username',
+                      hintStyle: AppStyles.subtitleTextStyle,
+                      border: UnderlineInputBorder(),
                     ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        // Action when the link is tapped
-                        debugPrint('Learn more tapped!');
-                      },
-                  ),
-                ],
+                  );
+                },
               ),
-            ),
-          ],
+              const SizedBox(height: 10),
+              RichText(
+                text: TextSpan(
+                  text: 'You can change your username once every two months. ',
+                  style: AppStyles.listSubtitleTextStyle,
+                  children: [
+                    TextSpan(
+                      text: 'Learn more',
+                      style: const TextStyle(
+                        color: Colors.black, // Link color
+                        fontFamily: 'Outfit',
+                        decoration: TextDecoration.underline, // Underlined
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          debugPrint('Learn more tapped!');
+                        },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
 }
-
