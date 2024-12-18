@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stubudmvp/database/StudentProfile.dart';
 
 class Field extends StatefulWidget {
-  const Field({super.key});
+  final int userID;
+
+  const Field({super.key, required this.userID});
 
   @override
   State<Field> createState() => _FieldState();
@@ -27,7 +30,7 @@ class _FieldState extends State<Field> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: Container(
-           margin: const EdgeInsets.only(top: 15, left: 5), 
+          margin: const EdgeInsets.only(top: 15, left: 5),
           height: 40,
           width: 40,
           decoration: const BoxDecoration(
@@ -40,30 +43,28 @@ class _FieldState extends State<Field> {
               Navigator.of(context).pop();
             },
           ),
-          
         ),
         actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Done',
-                style: GoogleFonts.outfit(
-                  textStyle: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF7C90D6),
-                  ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'Done',
+              style: GoogleFonts.outfit(
+                textStyle: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF7C90D6),
                 ),
               ),
             ),
-          ],
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-           
             Padding(
               padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.1),
               child: Text(
@@ -77,9 +78,6 @@ class _FieldState extends State<Field> {
                 ),
               ),
             ),
-
-            
-
             Row(
               children: [
                 Padding(
@@ -118,10 +116,7 @@ class _FieldState extends State<Field> {
                 ),
               ],
             ),
-
             const SizedBox(height: 20),
-
-           
             Padding(
               padding: EdgeInsets.symmetric(
                   vertical: 10,
@@ -137,10 +132,18 @@ class _FieldState extends State<Field> {
                 child: Column(
                   children: specialities.map((speciality) {
                     return GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         setState(() {
                           selectedSpeciality = speciality;
                         });
+                        Map<String, dynamic> updatedProfile = {
+                          'field': selectedSpeciality,
+                        };
+
+                        int rowsAffected =
+                            await StudentProfileDB.updateStudentProfile(
+                                widget.userID, updatedProfile);
+                        
                       },
                       child: Container(
                         child: Row(
@@ -191,7 +194,6 @@ class _FieldState extends State<Field> {
 }
 
 void showFilterDialog(BuildContext context) {
-  
   double screen = MediaQuery.of(context).size.width;
 
   showDialog(
@@ -204,43 +206,32 @@ void showFilterDialog(BuildContext context) {
         contentPadding: EdgeInsets.zero,
         content: Container(
           decoration: BoxDecoration(
-          color:Colors.white,
-          borderRadius: BorderRadius.circular(20),)
-          ,
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
           width: MediaQuery.of(context).size.width * 0.8,
           height: MediaQuery.of(context).size.height * 0.6,
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-             
-              Text(
-                "Filter Search",
-                 style: GoogleFonts.outfit(
-                  textStyle:  TextStyle(
+              Text("Filter Search",
+                  style: GoogleFonts.outfit(
+                      textStyle: TextStyle(
                     color: Colors.black,
-                    fontSize: screen*0.05,
+                    fontSize: screen * 0.05,
                     fontWeight: FontWeight.bold,
-                  ))
-              ),
+                  ))),
               const SizedBox(height: 20),
-
-             
               _buildDropdownRow("Wilaya", "Algiers"),
               const SizedBox(height: 15),
-
-             
               _buildDropdownRow("School", "ENSIA - The National School"),
               const SizedBox(height: 15),
-
-              
               _buildDropdownRow("Speciality", "Computer Science"),
               const SizedBox(height: 40),
-
-             
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); 
+                  Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF7C8FD6),
@@ -254,11 +245,11 @@ void showFilterDialog(BuildContext context) {
                 ),
                 child: Text(
                   "Done",
-                   style: GoogleFonts.outfit(
-                  textStyle: const TextStyle(
-                    color: Colors.white,
-                    
-                  ),),
+                  style: GoogleFonts.outfit(
+                    textStyle: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -269,29 +260,23 @@ void showFilterDialog(BuildContext context) {
   );
 }
 
-
-
 Widget _buildDropdownRow(String label, String defaultValue) {
   return Row(
     crossAxisAlignment: CrossAxisAlignment.center,
     children: [
-     
       Expanded(
-        flex: 3, 
-        child: Text(
-          label,
-           style: GoogleFonts.outfit(
-                  textStyle: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),)
-        ),
+        flex: 3,
+        child: Text(label,
+            style: GoogleFonts.outfit(
+              textStyle: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            )),
       ),
-
- 
       Expanded(
-        flex: 7, 
+        flex: 7,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: const BoxDecoration(
@@ -303,10 +288,8 @@ Widget _buildDropdownRow(String label, String defaultValue) {
           child: DropdownButton<String>(
             value: defaultValue,
             isExpanded: true,
-            underline: const SizedBox(), 
-            onChanged: (String? newValue) {
-             
-            },
+            underline: const SizedBox(),
+            onChanged: (String? newValue) {},
             items: <String>[defaultValue, "Option 2", "Option 3"]
                 .map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(

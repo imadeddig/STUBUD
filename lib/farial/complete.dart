@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:stubudmvp/information.dart';
+import 'package:stubudmvp/database/StudentProfile.dart';
+//import 'package:stubudmvp/information.dart';
+
+import 'package:stubudmvp/farial/speciality.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
 class complete extends StatefulWidget {
-  const complete({super.key});
+  final int userID;
+  const complete({super.key, required this.userID});
 
   @override
   State<complete> createState() => _complete();
@@ -17,8 +21,6 @@ class _complete extends State<complete> {
   bool see1 = true;
   String? _selectedGender;
   String? error = "";
-
- 
 
   final TextEditingController _dayController = TextEditingController();
   final TextEditingController _monthController = TextEditingController();
@@ -39,62 +41,56 @@ class _complete extends State<complete> {
     required String month,
     required String year,
   }) {
-    
     if (day.isEmpty || month.isEmpty || year.isEmpty) {
       return false;
     }
 
-   
     int? dayInt = int.tryParse(day);
     int? monthInt = int.tryParse(month);
     int? yearInt = int.tryParse(year);
 
     if (dayInt == null || monthInt == null || yearInt == null) {
-      return false; 
+      return false;
     }
 
-   
     if (monthInt < 1 || monthInt > 12) {
-      return false; 
+      return false;
     }
     if (dayInt < 1 || dayInt > 31) {
-      return false; 
+      return false;
     }
     if (yearInt < 1900 || yearInt > DateTime.now().year) {
-      return false; 
+      return false;
     }
 
-   
     try {
       DateTime date = DateTime(yearInt, monthInt, dayInt);
       return date.day == dayInt &&
           date.month == monthInt &&
           date.year == yearInt;
     } catch (e) {
-      return false; 
+      return false;
     }
   }
 
   String? validatePhone(String? phone) {
-   
     final RegExp phoneRegex = RegExp(r'^\d{10,15}$');
     if (phone == null) {
       return "Phone number is required.";
     } else if (!phoneRegex.hasMatch(phone)) {
       return "Enter a valid phone number (10-15 digits).";
     }
-    return null; 
+    return null;
   }
 
   String? validateUsername(String? username) {
- 
     final RegExp usernameRegex = RegExp(r'^[a-zA-Z0-9_]{4,20}$');
     if (username == null) {
       return "Username is required.";
     } else if (!usernameRegex.hasMatch(username)) {
       return "Username must be 4-20 characters and contain only letters, numbers, and underscores.";
     }
-    return null; 
+    return null;
   }
 
   String? validatePassword(String? password) {
@@ -108,7 +104,6 @@ class _complete extends State<complete> {
   }
 
   String? validateConfirmedPassword(String? pass) {
-  
     if (pass == null) {
       return "Please confirm your password.";
     } else if (password.text != pass) {
@@ -136,13 +131,12 @@ class _complete extends State<complete> {
 
   @override
   Widget build(BuildContext context) {
-
-   double screen = MediaQuery.of(context).size.width;
+    double screen = MediaQuery.of(context).size.width;
 
     return Scaffold(
         appBar: AppBar(
           leading: Container(
-               margin: const EdgeInsets.only(top: 15, left: 5), 
+              margin: const EdgeInsets.only(top: 15, left: 5),
               height: 40,
               width: 40,
               decoration: const BoxDecoration(
@@ -189,8 +183,9 @@ class _complete extends State<complete> {
               Text("Complete your profile",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.outfit(
-                      textStyle:  TextStyle(
-                          fontSize: screen*0.08, fontWeight: FontWeight.w700))),
+                      textStyle: TextStyle(
+                          fontSize: screen * 0.08,
+                          fontWeight: FontWeight.w700))),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Text(
@@ -365,7 +360,7 @@ class _complete extends State<complete> {
                                     "Male",
                                     style: GoogleFonts.outfit(
                                       textStyle: TextStyle(
-                                          fontSize: screen*0.03,
+                                          fontSize: screen * 0.03,
                                           fontWeight: FontWeight.w300),
                                     ),
                                   ),
@@ -385,8 +380,8 @@ class _complete extends State<complete> {
                                   title: Text(
                                     "Female",
                                     style: GoogleFonts.outfit(
-                                      textStyle:  TextStyle(
-                                          fontSize: screen*0.03,
+                                      textStyle: TextStyle(
+                                          fontSize: screen * 0.03,
                                           fontWeight: FontWeight.w300),
                                     ),
                                   ),
@@ -404,9 +399,7 @@ class _complete extends State<complete> {
                             ],
                           ),
                           Text(
-                            error != ""
-                                ? error!
-                                : "", 
+                            error != "" ? error! : "",
                             style: const TextStyle(
                                 color: Colors.red, fontSize: 14),
                           )
@@ -417,8 +410,8 @@ class _complete extends State<complete> {
                           Text(
                             "Date of Birth",
                             style: GoogleFonts.outfit(
-                              textStyle:  TextStyle(
-                                fontSize: screen*0.035,
+                              textStyle: TextStyle(
+                                fontSize: screen * 0.035,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -442,7 +435,7 @@ class _complete extends State<complete> {
                                 "only age will be shown",
                                 style: GoogleFonts.outfit(
                                   textStyle: TextStyle(
-                                    fontSize: screen*0.03,
+                                    fontSize: screen * 0.03,
                                     fontWeight: FontWeight.w300,
                                     color: Colors.grey,
                                   ),
@@ -454,9 +447,7 @@ class _complete extends State<complete> {
                         ],
                       ),
                       Text(
-                        dateErr != ""
-                            ? dateErr
-                            : "", 
+                        dateErr != "" ? dateErr : "",
                         style: const TextStyle(color: Colors.red, fontSize: 14),
                       ),
                       const SizedBox(height: 8),
@@ -465,11 +456,10 @@ class _complete extends State<complete> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: const Color(0xFF7C90D6),
-                            borderRadius: BorderRadius.circular(
-                                40), 
+                            borderRadius: BorderRadius.circular(40),
                           ),
                           child: MaterialButton(
-                            onPressed: () {
+                            onPressed: () async {
                               String day = _dayController.text;
                               String month = _monthController.text;
                               String year = _yearController.text;
@@ -488,11 +478,34 @@ class _complete extends State<complete> {
                                 if (_selectedGender != null) {
                                   if (validateDateInputs(
                                       day: day, month: month, year: year)) {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => const Infor(),
-                                      ),
-                                    );
+                                    final doesExist = await StudentProfileDB
+                                        .doesUsernameExist(username.text);
+                                    if (doesExist) {
+                                     setState(() {
+                                        error =
+                                          "Username already exists, try a different one.";
+                                     });
+                                    } else {
+                                      Map<String, dynamic> updatedProfile = {
+                                        'username': username.text,
+                                        'phoneNumber': phone.text,
+                                        'password': password.text,
+                                        'gender': _selectedGender,
+                                        'dateOfBirth':
+                                            "${_yearController.text}-${_monthController.text}-${_dayController.text}",
+                                      };
+
+                                      int rowsAffected = await StudentProfileDB
+                                          .updateStudentProfile(
+                                              widget.userID, updatedProfile);
+
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              Speciality(userID: widget.userID),
+                                        ),
+                                      );
+                                    }
                                   } else {
                                     setState(() {
                                       dateErr = "please enter a valid Date";
@@ -500,8 +513,7 @@ class _complete extends State<complete> {
                                   }
                                 } else if (_selectedGender == null) {
                                   setState(() {
-                                    error =
-                                        "Please select your gender."; 
+                                    error = "Please select your gender.";
                                   });
                                 }
                               }
@@ -513,8 +525,8 @@ class _complete extends State<complete> {
                             child: Text(
                               "Next",
                               style: GoogleFonts.outfit(
-                                  textStyle: const TextStyle(
-                                      color: Colors.white)), 
+                                  textStyle:
+                                      const TextStyle(color: Colors.white)),
                             ),
                           ),
                         ),
@@ -555,10 +567,10 @@ class _complete extends State<complete> {
 
   Widget _buildDateInputField(TextEditingController controller, String hintText,
       {bool isWide = false}) {
-        double screen = MediaQuery.of(context).size.width;
+    double screen = MediaQuery.of(context).size.width;
     return SizedBox(
       height: 45,
-      width: isWide ? 60 : 40, 
+      width: isWide ? 60 : 40,
       child: TextField(
         onChanged: (value) {
           if (hintText != "YYYY") {
@@ -579,15 +591,15 @@ class _complete extends State<complete> {
         textAlign: TextAlign.center,
         style: GoogleFonts.outfit(
           textStyle: TextStyle(
-            fontSize: screen*0.03,
+            fontSize: screen * 0.03,
             fontWeight: FontWeight.w400,
           ),
         ),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: GoogleFonts.outfit(
-            textStyle:  TextStyle(
-              fontSize: screen*0.03,
+            textStyle: TextStyle(
+              fontSize: screen * 0.03,
               fontWeight: FontWeight.w300,
               color: Colors.grey,
             ),

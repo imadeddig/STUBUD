@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stubudmvp/information.dart';
 import 'field.dart';
 import 'year.dart';
 
 class Speciality extends StatefulWidget {
-  const Speciality({super.key});
+    final int userID;
+
+  const Speciality({super.key, required this.userID});
 
   @override
   State<Speciality> createState() => _SpecialityState();
@@ -101,7 +104,7 @@ class _SpecialityState extends State<Speciality> {
                   ),
                   IconButton(onPressed: (){
                       Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) =>  const Field()));
+                              MaterialPageRoute(builder: (context) =>Field(userID:widget.userID)));
                         
                   }, icon: const Icon(Icons.chevron_right, color: Colors.black),)
                 ],
@@ -141,7 +144,7 @@ class _SpecialityState extends State<Speciality> {
                     ),
                    IconButton(onPressed: (){
                       Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => const Year()));
+                              MaterialPageRoute(builder: (context) =>  Year(userID:widget.userID)));
                         
                    }, icon: const Icon(Icons.chevron_right, color: Colors.black),)
                   ]),
@@ -156,7 +159,7 @@ class _SpecialityState extends State<Speciality> {
                 ),
                 child: MaterialButton(
                   onPressed: () {
-                        Navigator.of(context).pushNamed("interest");
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Infor(userID:widget.userID)));
                   },
                   height: 55,
                   minWidth: 190,

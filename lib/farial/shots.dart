@@ -1,11 +1,14 @@
-import 'dart:io'; 
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:stubudmvp/farial/beCool.dart';
+import '../database/UserImages.dart';
 
 class Shots extends StatefulWidget {
-  const Shots({super.key});
+  final int userID;
+
+  const Shots({super.key, required this.userID});
 
   @override
   State<Shots> createState() => _ShotsState();
@@ -19,10 +22,25 @@ class _ShotsState extends State<Shots> {
     final pickedImage = await imagePicker.pickImage(source: source);
     if (pickedImage != null) {
       setState(() {
-        images[index] = File(pickedImage.path); 
+        images[index] = File(pickedImage.path);
       });
+
+      await saveImageToDatabase(pickedImage.path);
     } else {
       print('No image selected.');
+    }
+  }
+
+  Future<void> saveImageToDatabase(String imagePath) async {
+    try {
+      int result = await UserImagesDB.insertUserImage(widget.userID, imagePath);
+      if (result != -1) {
+        print("Image saved to database");
+      } else {
+        print("Failed to save image to database");
+      }
+    } catch (e) {
+      print("Error saving image to database: $e");
     }
   }
 
@@ -47,12 +65,15 @@ class _ShotsState extends State<Shots> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-                Text("Select Image Source",
-                    style: GoogleFonts.outfit(
-                        textStyle: const TextStyle(
+                Text(
+                  "Select Image Source",
+                  style: GoogleFonts.outfit(
+                    textStyle: const TextStyle(
                       color: Color.fromRGBO(0, 0, 0, 0.6),
                       fontSize: 15,
-                    ))),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
@@ -121,7 +142,7 @@ class _ShotsState extends State<Shots> {
             child: TextButton(
               onPressed: () {
                 Navigator.of(context)
-                    .pushNamed("becool");
+                    .push(MaterialPageRoute(builder: (context) => beCool(userID:widget.userID)));
               },
               child: Text(
                 "Skip",
@@ -217,8 +238,7 @@ class _ShotsState extends State<Shots> {
             
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                
+              children: [                
                 GestureDetector(
                   onTap: () => _showImageSourceDialog(context, 0),
                   child: Container(
@@ -236,8 +256,8 @@ class _ShotsState extends State<Shots> {
                       ),
                     ),
                     child: images[0] != null
-                      ? Image.file(images[0]!, fit: BoxFit.cover) :
-                         const Icon(Icons.add, size: 40),
+                        ? Image.file(images[0]!, fit: BoxFit.cover)
+                        : const Icon(Icons.add, size: 40),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -269,8 +289,8 @@ class _ShotsState extends State<Shots> {
                               ),
                             ),
                             child: images[i] != null
-                                ? Image.file(images[i]!, fit: BoxFit.cover): 
-                                const Icon(Icons.add, size: 20),
+                                ? Image.file(images[i]!, fit: BoxFit.cover)
+                                : const Icon(Icons.add, size: 20),
                           ),
                         ),
                       ],
@@ -336,8 +356,8 @@ class _ShotsState extends State<Shots> {
                       icon:
                           const Icon(Icons.arrow_forward, color: Colors.black),
                       onPressed: () {
-                       Navigator.of(context)
-                    .pushNamed("becool");
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>  beCool(userID: widget.userID,)));
                       },
                     ),
                   ),

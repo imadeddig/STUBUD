@@ -3,7 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:stubudmvp/imad/exploreBuddiesPage.dart';
 
 class beCool extends StatefulWidget {
-  const beCool({super.key});
+   final int userID;
+  const beCool ({super.key, required this.userID});
 
   @override
   State<beCool> createState() => _beCool();
@@ -274,7 +275,7 @@ class _beCool extends State<beCool> {
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
                         builder: (context) =>
-                            const Explorebuddiespage(), 
+                            Explorebuddiespage(userID:widget.userID), 
                       ),
                       (route) =>
                           false, 

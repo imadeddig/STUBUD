@@ -5,7 +5,8 @@ import 'package:stubudmvp/imad/exploreBuddiesPage.dart';
 import 'list_messages.dart';
 
 class Chatbud1 extends StatefulWidget {
-  const Chatbud1({super.key});
+    final int userID;
+  const Chatbud1 ({super.key, required this.userID});
 
   @override
   _Chatbud1State createState() => _Chatbud1State();
@@ -25,7 +26,7 @@ class _Chatbud1State extends State<Chatbud1> {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
-                  const Explorebuddiespage()), // Replace `ImadPage` with your actual widget
+                   Explorebuddiespage(userID:widget.userID)), // Replace `ImadPage` with your actual widget
           (route) =>
               false, // This removes all the previous routes from the stack
         );
@@ -37,7 +38,7 @@ class _Chatbud1State extends State<Chatbud1> {
           Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) =>
-                  const Settings()), // Replace `ImadPage` with your actual widget
+                   Settings(userID:widget.userID)), // Replace `ImadPage` with your actual widget
           (route) =>
               false, // This removes all the previous routes from the stack
         );
@@ -194,7 +195,7 @@ class _Chatbud1State extends State<Chatbud1> {
           Expanded(
             child: isStudyBuddiesSelected
                 ? _buildStudyBuddiesList(screenWidth)
-                : ChatListScreen(),
+                : ChatListScreen(userID: widget.userID),
           ),
         ],
       ),

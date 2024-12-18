@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stubudmvp/farial/shots.dart';
+import 'package:stubudmvp/database/StudentProfile.dart';
 
 class Interest5 extends StatefulWidget {
-  const Interest5({super.key});
+  final int userID;
+
+  const Interest5({super.key, required this.userID});
 
   @override
   State<Interest5> createState() => _Interest5State();
 }
 
 class _Interest5State extends State<Interest5> {
+  TextEditingController locationController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -25,7 +31,8 @@ class _Interest5State extends State<Interest5> {
             padding: const EdgeInsets.only(right: 17),
             child: TextButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed("messenger");
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => Shots(userID: widget.userID)));
                 },
                 child: Text(
                   "Skip",
@@ -108,6 +115,7 @@ class _Interest5State extends State<Interest5> {
                       SizedBox(
                         height: 41,
                         child: TextField(
+                          controller: locationController,
                           textAlignVertical: TextAlignVertical.center,
                           decoration: InputDecoration(
                             enabledBorder: OutlineInputBorder(
@@ -201,8 +209,16 @@ class _Interest5State extends State<Interest5> {
             bottom: screenHeight * 0.041,
             right: screenWidth * 0.06,
             child: InkWell(
-              onTap: () {
-                Navigator.of(context).pushNamed("shots");
+              onTap: () async {
+                String location = locationController.text;
+                Map<String, dynamic> updatedProfile = {
+                  'location': location,
+                };
+
+                int rowsAffected = await StudentProfileDB.updateStudentProfile(
+                    widget.userID, updatedProfile);
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => Shots(userID: widget.userID)));
               },
               child: Container(
                 padding: const EdgeInsets.all(15),
