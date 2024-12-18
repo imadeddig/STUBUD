@@ -413,7 +413,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
               child: SwipeableButtonView(
-                buttonText: "Slide to Befriend",
+                buttonText: "Slide To Befriend",
                 buttonWidget: const Icon(
                   Icons.heart_broken,
                   color: Colors.grey,
