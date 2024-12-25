@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "148266613850",
+    "project_id": "stubud-9f2d4",
+    "storage_bucket": "stubud-9f2d4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148266613850:android:f206739b130d5eb6d4ac63",
+        "android_client_info": {
+          "package_name": "com.example.stubudmvp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_w_NcjK23tdzl0EfSLiNvgYeSWM55yhI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
