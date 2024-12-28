@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,6 @@ import 'package:stubudmvp/database/StudentProfile.dart';
 import 'package:stubudmvp/imad/exploreBuddiesPage.dart';
 import 'dart:ui';
 import 'package:stubudmvp/welcome.dart';
-// Import your database helper
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -26,46 +26,75 @@ class _LoginState extends State<Login> {
     _passwordController.dispose();
     super.dispose();
   }
+void _handleLogin(BuildContext context) async {
+  if (_formKey.currentState!.validate()) {
+    String emailOrUsername = _emailController.text.trim();
+    String password = _passwordController.text.trim();
 
-  void _handleLogin(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      String emailOrUsername = _emailController.text.trim();
-      String password = _passwordController.text.trim();
+    try {
+     
+      QuerySnapshot emailQuery = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: emailOrUsername)
+          .limit(1)
+          .get();
 
-      // Check if user exists and validate password from the database
-      var user =
-          await StudentProfileDB.getUserByEmailOrUsername(emailOrUsername);
+      QuerySnapshot usernameQuery = await FirebaseFirestore.instance
+          .collection('users')
+          .where('username', isEqualTo: emailOrUsername)
+          .limit(1)
+          .get();
 
-      if (user != null && user['password'] == password) {
-        // Login successful, navigate to the next screen
-        final userID =
-            await StudentProfileDB.getCurrentUserID(_emailController.text);
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (context) => Explorebuddiespage(userID:userID!),
-          ),
-          (route) => false,
-        );
+      var userSnapshot = emailQuery.docs.isNotEmpty
+          ? emailQuery.docs.first
+          : usernameQuery.docs.isNotEmpty
+              ? usernameQuery.docs.first
+              : null;
+
+      if (userSnapshot != null) {
+        Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>;
+
+        if (userData['password'] == password) {
+          final userID = userSnapshot.id;
+
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => Explorebuddiespage(userID: userID),
+            ),
+            (route) => false,
+          );
+        } else {
+          _showLoginError(context, "Incorrect username/email or password.");
+        }
       } else {
-        // Incorrect email/username or password
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("Login Error"),
-            content: const Text("Incorrect username/email or password."),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text("OK"),
-              ),
-            ],
-          ),
-        );
+        _showLoginError(context, "User not found. Please check your email or username.");
       }
+    } catch (e) {
+      print("Error during login: $e");
+      _showLoginError(context, "An unexpected error occurred. Please try again.");
     }
   }
+}
+
+void _showLoginError(BuildContext context, String message) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Login Error"),
+      content: Text(message),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text("OK"),
+        ),
+      ],
+    ),
+  );
+}
+
+
 
   @override
   Widget build(BuildContext context) {

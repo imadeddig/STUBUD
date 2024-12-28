@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stubudmvp/farial/causes.dart';
+import 'package:stubudmvp/farial/sure.dart';
 
-void showDeleteAccountDialog(BuildContext context) {
+void showDeleteAccountDialog(BuildContext context, String userID) {
   double screen = MediaQuery.of(context).size.width;
 
   showDialog(
@@ -34,7 +37,7 @@ void showDeleteAccountDialog(BuildContext context) {
               ),
               const SizedBox(height: 10),
               Text(
-                "uh-oh, looks like you're about to leave us! :( Please select a reason for deleting your account",
+                "Uh-oh, looks like you're about to leave us! :( Please select a reason for deleting your account",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(
                   textStyle: TextStyle(
@@ -45,25 +48,26 @@ void showDeleteAccountDialog(BuildContext context) {
                 ),
               ),
               const SizedBox(height: 20),
-               Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Divider(thickness: 1.0, color: Colors.grey),
-                    _buildReasonRow(context, "Found my study groups"),
-                    const Divider(thickness: 1.0, color: Colors.grey),
-                    _buildReasonRow(
-                        context, "Couldn't meet compatible buddies"),
-                    const Divider(thickness: 1.0, color: Colors.grey),
-                    _buildReasonRow(context, "Not satisfied with the app"),
-                    const Divider(thickness: 1.0, color: Colors.grey),
-                    _buildReasonRow(context, "Others"),
-                    const Divider(thickness: 1.0, color: Colors.grey),
-                  ],
-                ),
-              const SizedBox(height:15),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Divider(thickness: 1.0, color: Colors.grey),
+                  _buildReasonRow(context, "Found my study groups", userID),
+                  const Divider(thickness: 1.0, color: Colors.grey),
+                  _buildReasonRow(
+                      context, "Couldn't meet compatible buddies", userID),
+                  const Divider(thickness: 1.0, color: Colors.grey),
+                  _buildReasonRow(
+                      context, "Not satisfied with the app", userID),
+                  const Divider(thickness: 1.0, color: Colors.grey),
+                  _buildReasonRow(context, "Others", userID),
+                  const Divider(thickness: 1.0, color: Colors.grey),
+                ],
+              ),
+              const SizedBox(height: 15),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Dismiss the dialog
+                  Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF7C8FD6),
@@ -94,25 +98,41 @@ void showDeleteAccountDialog(BuildContext context) {
   );
 }
 
-Widget _buildReasonRow(BuildContext context, String reason) {
+Widget _buildReasonRow(BuildContext context, String reason, String userID) {
+  final issues = FirebaseFirestore.instance.collection('issues');
+
   return GestureDetector(
-    onTap: () {
-
-       if(reason=="Found my study groups"){
-        Navigator.of(context).pushNamed("sure");
+    onTap: () async {
+      if (reason == "Found my study groups") {
+        DocumentReference docRef = await issues.add({
+          'userID': userID,
+          'reason': reason,
+        });
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => Sure(userID: userID)));
       }
 
-      if(reason=="Couldn't meet compatible buddies"){
+      if (reason == "Couldn't meet compatible buddies") {
+         DocumentReference docRef = await issues.add({
+          'userID': userID,
+          'reason': reason,
+        });
         Navigator.of(context).pop();
-        showFilterBuddiesDialog(context);
+        showFilterBuddiesDialog(context, userID);
       }
-       if(reason=="Not satisfied with the app"){
-        Navigator.of(context).pushNamed("causes");
-        
+      if (reason == "Not satisfied with the app") {
+         DocumentReference docRef = await issues.add({
+          'userID': userID,
+          'reason': reason,
+        });
+        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Causes(userID:userID)));
       }
-       if(reason=="Others"){
-        Navigator.of(context).pushNamed("causes");
-        
+      if (reason == "Others") {
+         DocumentReference docRef = await issues.add({
+          'userID': userID,
+          'reason': reason,
+        });
+        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Causes(userID: userID)));
       }
     },
     child: Container(
@@ -136,7 +156,7 @@ Widget _buildReasonRow(BuildContext context, String reason) {
   );
 }
 
-void showFilterBuddiesDialog(BuildContext context) {
+void showFilterBuddiesDialog(BuildContext context, String userID) {
   double screen = MediaQuery.of(context).size.width;
 
   showDialog(
@@ -156,7 +176,6 @@ void showFilterBuddiesDialog(BuildContext context) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Title
               Text(
                 "Filter Buddies",
                 style: GoogleFonts.outfit(
@@ -166,8 +185,6 @@ void showFilterBuddiesDialog(BuildContext context) {
                 ),
               ),
               const SizedBox(height: 10),
-
-              // Subtitle
               Text(
                 "You can still filter people you want to see. Blabla blabl.",
                 textAlign: TextAlign.center,
@@ -178,14 +195,12 @@ void showFilterBuddiesDialog(BuildContext context) {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // "Filter Buddies" Button
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed("filter"); // Close the dialog
+                  Navigator.of(context).pushNamed("filter");
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7C8FD6), // Light blue color
+                  backgroundColor: const Color(0xFF7C8FD6),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(262),
                   ),
@@ -204,11 +219,12 @@ void showFilterBuddiesDialog(BuildContext context) {
                 ),
               ),
               const SizedBox(height: 15),
-
-              // "Delete Account" Button
               TextButton(
-                onPressed: () {
-                  // Handle delete account logic
+                onPressed: () async {
+                  await FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(userID)
+                      .delete();
                   Navigator.of(context).pop();
                 },
                 child: Text(

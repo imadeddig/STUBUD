@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stubudmvp/welcome.dart';
 
 class Sure extends StatefulWidget {
-  const Sure({super.key});
+  final String userID;
+  const Sure({super.key,required this.userID});
 
   @override
   State<Sure> createState() => _SureState();
@@ -82,7 +84,17 @@ const SizedBox(height:20),
                 borderRadius: BorderRadius.circular(40),
               ),
               child: MaterialButton(
-                onPressed: () {
+                onPressed: () async {
+                   Map<String, dynamic> updatedProfile = {
+                                        "active":false,
+                                      };
+
+                                      DocumentReference userDoc =
+                                          FirebaseFirestore.instance
+                                              .collection('users')
+                                              .doc(widget.userID);
+
+                                      await userDoc.update(updatedProfile);
                    Navigator.of(context).pushNamed("mainpage");
                 },
                 height: 55,
@@ -100,7 +112,8 @@ const SizedBox(height:20),
 
             Center(
            
-              child: TextButton(onPressed: (){
+              child: TextButton(onPressed: () async {
+                await FirebaseFirestore.instance.collection('users').doc(widget.userID).delete();
                   Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder: (context) => const Welcome(),

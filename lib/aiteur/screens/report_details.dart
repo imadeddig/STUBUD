@@ -135,7 +135,7 @@ class FullScreenConfirmationDialog extends StatelessWidget {
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
                         builder: (context) =>
-                            const Chatbud1(userID: 1,), // Replace with your desired screen/widget
+                            const Chatbud1(userID:'1',), // Replace with your desired screen/widget
                       ),
                       (route) =>
                           false, // Removes all previous routes from the stack
@@ -163,7 +163,7 @@ class FullScreenConfirmationDialog extends StatelessWidget {
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
                         builder: (context) =>
-                            const Chatbud1(userID: 1,), // Replace with your desired screen/widget
+                            const Chatbud1(userID: '1',), // Replace with your desired screen/widget
                       ),
                       (route) =>
                           false, // Removes all previous routes from the stack

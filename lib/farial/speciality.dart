@@ -5,7 +5,7 @@ import 'field.dart';
 import 'year.dart';
 
 class Speciality extends StatefulWidget {
-    final int userID;
+  final String userID;
 
   const Speciality({super.key, required this.userID});
 

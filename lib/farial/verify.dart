@@ -1,43 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'success.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../database/db_helper.dart';
+import 'package:stubudmvp/farial/auth/firebase_auth.dart';
+import 'success.dart';
 
 class Verify extends StatefulWidget {
-  final int userID;
+  final String email;
+  final String userID;
 
-  const Verify({super.key, required this.userID});
+  const Verify({super.key, required this.email,required this.userID});
 
   @override
   State<Verify> createState() => _VerifyState();
 }
 
 class _VerifyState extends State<Verify> {
-  late Future<String?> emailFuture;
 
-  @override
-  void initState() {
-    super.initState();
-    emailFuture = _fetchEmail();
-  }
+    final FirebaseAuthService _auth=FirebaseAuthService();
+    
+  final List<TextEditingController> _codeControllers =
+      List.generate(5, (_) => TextEditingController());
+  String errorMessage = "";
 
-  Future<String?> _fetchEmail() async {
-    final database = await DBHelper.getDatabase();
-    final result = await database.query(
-      'StudentProfile',
-      columns: ['email'],
-      where: 'userID = ?',
-      whereArgs: [widget.userID],
-      limit: 1,
-    );
+ void _verifyCode() async {
+  final enteredCode = _codeControllers.map((controller) => controller.text).join();
 
-    if (result.isNotEmpty) {
-      return result.first['email'] as String?;
-    } else {
-      return null;
+  if (enteredCode.length == 5) {
+    try {
+      // Replace with your backend verification logic
+      final isValid = await _auth.verifyCode(widget.email,enteredCode);
+
+      if (isValid) {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) =>  success(userID:widget.userID),
+        ));
+      } else {
+        setState(() {
+          errorMessage = "Invalid verification code. Please try again.";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = "An error occurred while verifying the code.";
+      });
     }
+  } else {
+    setState(() {
+      errorMessage = "Please enter the full 5-digit code.";
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -88,95 +101,69 @@ class _VerifyState extends State<Verify> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 7),
-                  FutureBuilder<String?>(
-                    future: emailFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return Text("Error: ${snapshot.error}");
-                      } else if (!snapshot.hasData || snapshot.data == null) {
-                        return const Text("Email not found.");
-                      } else {
-                        final email = snapshot.data!;
-                        return Container(
-                          width: MediaQuery.of(context).size.width * 0.75,
-                          decoration: BoxDecoration(
-                            color: const Color.fromRGBO(124, 144, 214, 0.1),
-                            border: Border.all(color: Colors.black, width: 2),
-                            borderRadius: BorderRadius.circular(8),
+                  const SizedBox(height: 7),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    decoration: BoxDecoration(
+                      color: const Color.fromRGBO(124, 144, 214, 0.1),
+                      border: Border.all(color: Colors.black, width: 2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.all(6),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            widget.email,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.04,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          padding: const EdgeInsets.all(6),
-                          child: Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  email,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize:
-                                        MediaQuery.of(context).size.width *
-                                            0.04,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              Center(
-                                child: Transform.rotate(
-                                  angle: 1,
-                                  child: const Icon(Icons.arrow_back,
-                                      color: Colors.black, size: 20),
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      }
-                    },
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-              Container(height: 45),
+              const SizedBox(height: 45),
               Center(
                 child: SizedBox(
                   width: 250,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildVerificationField(),
-                      _buildVerificationField(),
-                      _buildVerificationField(),
-                      _buildVerificationField(),
-                      _buildVerificationField(),
-                    ],
+                    children: List.generate(
+                      5,
+                      (index) => _buildVerificationField(index),
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "it should be received in",
-                    style: GoogleFonts.outfit(
-                      textStyle: const TextStyle(color: Colors.black),
+              if (errorMessage.isNotEmpty) ...[
+                const SizedBox(height: 15),
+                Center(
+                  child: Text(
+                    errorMessage,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Text(" 29s",
-                      style: GoogleFonts.outfit(
-                        textStyle: const TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
-                      ))
-                ],
-              ),
+                ),
+              ],
               const SizedBox(height: 60),
-              Text("didn't get a code?",
-                  style: GoogleFonts.outfit(
-                    textStyle: const TextStyle(
-                        color: Colors.black,
-                        decoration: TextDecoration.underline),
-                  )),
+              Text(
+                "Didn't get a code?",
+                style: GoogleFonts.outfit(
+                  textStyle: const TextStyle(
+                    color: Colors.black,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
               const SizedBox(height: 40),
               Container(
                 decoration: BoxDecoration(
@@ -184,14 +171,7 @@ class _VerifyState extends State<Verify> {
                   borderRadius: BorderRadius.circular(40),
                 ),
                 child: MaterialButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            success(userID: widget.userID), // Use widget.userID
-                      ),
-                    );
-                  },
+                  onPressed: _verifyCode,
                   height: 55,
                   minWidth: 190,
                   padding:
@@ -212,11 +192,12 @@ class _VerifyState extends State<Verify> {
     );
   }
 
-  Widget _buildVerificationField() {
+  Widget _buildVerificationField(int index) {
     return SizedBox(
       height: 55,
       width: 45,
       child: TextField(
+        controller: _codeControllers[index],
         decoration: InputDecoration(
           filled: true,
           fillColor: const Color.fromRGBO(124, 144, 214, 0.1),
@@ -227,8 +208,10 @@ class _VerifyState extends State<Verify> {
           ),
         ),
         onChanged: (value) {
-          if (value.length == 1) {
+          if (value.length == 1 && index < 4) {
             FocusScope.of(context).nextFocus();
+          } else if (value.isEmpty && index > 0) {
+            FocusScope.of(context).previousFocus();
           }
         },
         style: GoogleFonts.outfit(

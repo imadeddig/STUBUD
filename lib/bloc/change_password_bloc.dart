@@ -104,7 +104,7 @@ class ChangePasswordBloc extends Bloc<ChangePasswordEvent, ChangePasswordState> 
       try {
         // Ensure passwords match
         if (event.newPassword != event.confirmPassword) {
-          emit(ChangePasswordFailure("New password and confirmation do not match."));
+          emit(const ChangePasswordFailure("New password and confirmation do not match."));
           return;
         }
 
@@ -118,7 +118,7 @@ class ChangePasswordBloc extends Bloc<ChangePasswordEvent, ChangePasswordState> 
         );
 
         if (users.isEmpty) {
-          emit(ChangePasswordFailure("User not found."));
+          emit(const ChangePasswordFailure("User not found."));
           return;
         }
 
@@ -126,7 +126,7 @@ class ChangePasswordBloc extends Bloc<ChangePasswordEvent, ChangePasswordState> 
 
         // Check if currentPassword matches the stored password
         if (event.currentPassword != storedPassword) {
-          emit(ChangePasswordFailure("Current password is incorrect."));
+          emit(const ChangePasswordFailure("Current password is incorrect."));
           return;
         }
 

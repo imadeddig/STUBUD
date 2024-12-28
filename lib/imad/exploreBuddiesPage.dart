@@ -6,7 +6,7 @@ import 'package:stubudmvp/imad/filterPage.dart';
 import 'package:swipeable_button_view/swipeable_button_view.dart';
 
 class Explorebuddiespage extends StatefulWidget {
-  final int userID;
+  final String userID;
   const Explorebuddiespage ({super.key, required this.userID});
 
   @override

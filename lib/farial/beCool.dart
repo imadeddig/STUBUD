@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:stubudmvp/imad/exploreBuddiesPage.dart';
 
 class beCool extends StatefulWidget {
-   final int userID;
+   final String userID;
   const beCool ({super.key, required this.userID});
 
   @override

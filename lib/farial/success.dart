@@ -4,7 +4,7 @@ import '../farial/complete.dart';
 
 class success extends StatefulWidget {
 
-  final int userID;
+  final String userID;
   const success ({super.key, required this.userID});
 
   @override

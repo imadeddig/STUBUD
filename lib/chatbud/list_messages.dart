@@ -4,7 +4,7 @@ import 'chat_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ChatListScreen extends StatefulWidget {
-  final int userID;
+  final String userID;
 
   const ChatListScreen({super.key, required this.userID});
 
@@ -20,29 +20,29 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   void initState() {
     super.initState();
-    fetchChats(); 
+    //fetchChats(); 
   }
 
 
 
-  Future<void> fetchChats() async {
-    try {
-      // Fetch chat sessions and update state
-      List<Map<String, dynamic>> fetchedChats =
-          await ChatSessionsDB.getChatSessions(widget.userID);
-      print('Chats fetched: $fetchedChats');
-      setState(() {
-        chats =
-            Future.value(fetchedChats); // Update state with the fetched chats
-        isLoading = false;
-      });
-    } catch (error) {
-      print('Error fetching chats: $error');
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  // Future<void> fetchChats() async {
+  //   try {
+  //     // Fetch chat sessions and update state
+  //     List<Map<String, dynamic>> fetchedChats =
+  //         await ChatSessionsDB.getChatSessions(widget.userID);
+  //     print('Chats fetched: $fetchedChats');
+  //     setState(() {
+  //       chats =
+  //           Future.value(fetchedChats); // Update state with the fetched chats
+  //       isLoading = false;
+  //     });
+  //   } catch (error) {
+  //     print('Error fetching chats: $error');
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

@@ -1,13 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stubudmvp/aiteur/screens/edit_account_info.dart';
 import 'package:stubudmvp/chatbud/chatbud1.dart';
 import 'package:stubudmvp/database/StudentProfile.dart';
+import 'package:stubudmvp/farial/blocked.dart';
+import 'package:stubudmvp/farial/profileInfo.dart';
 import 'package:stubudmvp/imad/exploreBuddiesPage.dart';
 import 'package:stubudmvp/farial/delete.dart';
 
 class Settings extends StatefulWidget {
-    final int userID;
+  final String userID;
   const Settings({super.key, required this.userID});
 
   @override
@@ -15,54 +18,70 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  late FirebaseFirestore firestore;
+  late CollectionReference issues;
+
   bool isStudyBuddiesSelected = true;
   int _currentIndex = 2;
 
   String username = '';
+  String email = '';
+  String fullName = '';
 
   @override
   void initState() {
     super.initState();
     _fetchUserProfile();
+
+    firestore = FirebaseFirestore.instance;
+    issues = firestore.collection('issues');
   }
 
   Future<void> _fetchUserProfile() async {
-    final profile = await StudentProfileDB.getStudentProfileByUserID(widget.userID);
-    if (profile != null) {
-      setState(() {
-        username = profile['username'] ?? 'unknown_user';
-      });
+    try {
+      DocumentSnapshot<Map<String, dynamic>> profileSnapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.userID)
+              .get();
+
+      if (profileSnapshot.exists) {
+        final profileData = profileSnapshot.data();
+        if (profileData != null) {
+          setState(() {
+            username = profileData['username'] ?? 'unknown_user';
+            email = profileData['email'];
+            fullName = profileData['fullName'];
+          });
+        }
+      } else {
+        print("User profile does not exist in Firestore.");
+      }
+    } catch (e) {
+      print("Error fetching user profile: $e");
     }
   }
-
 
   void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
-      switch (index) {
+    switch (index) {
       case 0:
-          Navigator.of(context).pushAndRemoveUntil(
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) =>
-                  Explorebuddiespage(userID:widget.userID)), 
-          (route) =>
-              false,
+              builder: (context) => Explorebuddiespage(userID: widget.userID)),
+          (route) => false,
         );
         break;
       case 1:
-        
-          Navigator.of(context).pushAndRemoveUntil(
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) =>
-                   Chatbud1(userID:widget.userID)), 
-          (route) =>
-              false, 
+              builder: (context) => Chatbud1(userID: widget.userID)),
+          (route) => false,
         );
         break;
       case 2:
-        
-        
         break;
     }
   }
@@ -130,7 +149,7 @@ class _SettingsState extends State<Settings> {
               ],
             ),
             Text(
-              "imad eddine",
+              fullName,
               style: GoogleFonts.outfit(
                 textStyle: const TextStyle(
                   fontSize: 20,
@@ -154,12 +173,26 @@ class _SettingsState extends State<Settings> {
             _buildSectionHeader(context, "Account Information"),
             const SizedBox(height: 15),
             _buildSettingsContainer(context, [
-              _buildResponsiveProfileRow(context, "My Profile", false,() => Navigator.of(context).pushNamed("ProfileInfo")),
-              _buildResponsiveProfileRow(context, "Blocked users", false, () => Navigator.of(context).pushNamed("blocked")),
-              _buildResponsiveProfileRow(context, "Search preferences", false, () {}),
+              _buildResponsiveProfileRow(
+                  context,
+                  "My Profile",
+                  false,
+                  () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) =>
+                          Profileinfo(userID: widget.userID)))),
+              _buildResponsiveProfileRow(
+                  context,
+                  "Blocked users",
+                  false,
+                  () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => Blocked(userID: widget.userID)))),
+              _buildResponsiveProfileRow(
+                  context, "Search preferences", false, () {}),
               _buildResponsiveProfileRow(context, "Language", false, () {}),
-              _buildResponsiveProfileRow(context, "Personal info settings", true, () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>EditAccountInfoScreen(userID: widget.userID,)));
+              _buildResponsiveProfileRow(
+                  context, "Personal info settings", true, () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => EditAccountInfoScreen(userID: 1)));
               }),
             ]),
             const SizedBox(height: 25),
@@ -167,13 +200,16 @@ class _SettingsState extends State<Settings> {
             const SizedBox(height: 15),
             _buildSettingsContainer(context, [
               _buildResponsiveProfileRow(context, "Help", false, () {}),
-              _buildResponsiveProfileRow(context, "Community guidelines", false, () {}),
+              _buildResponsiveProfileRow(
+                  context, "Community guidelines", false, () {}),
               _buildResponsiveProfileRow(context, "Feedback", true, () {}),
             ]),
             const SizedBox(height: 25),
             _buildSettingsContainer(context, [
-              _buildResponsiveProfileRow(context, "Logout", false, () => _showFilterDialog(context)),
-              _buildResponsiveProfileRow(context, "Delete my account", true, () => showDeleteAccountDialog(context)),
+              _buildResponsiveProfileRow(
+                  context, "Logout", false, () => _showFilterDialog(context)),
+              _buildResponsiveProfileRow(context, "Delete my account", true,
+                  () => showDeleteAccountDialog(context, widget.userID)),
             ]),
             const SizedBox(height: 40),
           ],
@@ -212,7 +248,8 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  Widget _buildResponsiveProfileRow(BuildContext context, String title, bool last, VoidCallback onTap) {
+  Widget _buildResponsiveProfileRow(
+      BuildContext context, String title, bool last, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -307,7 +344,6 @@ class PartialCirclePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-
 void _showFilterDialog(BuildContext context) {
   showDialog(
     context: context,
@@ -330,11 +366,10 @@ void _showFilterDialog(BuildContext context) {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              
               SizedBox(height: MediaQuery.of(context).size.height * 0.015),
               Center(
                 child: Text("are you sure you want to log out?",
-                textAlign: TextAlign.center,
+                    textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                         textStyle: const TextStyle(
                       color: Color.fromRGBO(0, 0, 0, 0.6),
@@ -342,11 +377,10 @@ void _showFilterDialog(BuildContext context) {
                     ))),
               ),
               const SizedBox(height: 20),
-
               ElevatedButton(
                 onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil("login", (route) => false);
-
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil("login", (route) => false);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF7C8FD6),
@@ -367,7 +401,6 @@ void _showFilterDialog(BuildContext context) {
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
@@ -375,7 +408,6 @@ void _showFilterDialog(BuildContext context) {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                                  
                 ),
                 child: Text(
                   "Cancel",

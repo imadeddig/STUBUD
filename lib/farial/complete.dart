@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:stubudmvp/database/StudentProfile.dart';
@@ -8,7 +9,7 @@ import 'package:stubudmvp/farial/speciality.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class complete extends StatefulWidget {
-  final int userID;
+  final String userID;
   const complete({super.key, required this.userID});
 
   @override
@@ -463,28 +464,36 @@ class _complete extends State<complete> {
                               String day = _dayController.text;
                               String month = _monthController.text;
                               String year = _yearController.text;
+
                               if (_selectedGender != null) {
                                 setState(() {
                                   error = "";
                                 });
                               }
+
                               if (validateDateInputs(
                                   day: day, month: month, year: year)) {
                                 setState(() {
                                   dateErr = "";
                                 });
                               }
+
                               if (_formKey.currentState!.validate()) {
                                 if (_selectedGender != null) {
                                   if (validateDateInputs(
                                       day: day, month: month, year: year)) {
-                                    final doesExist = await StudentProfileDB
-                                        .doesUsernameExist(username.text);
-                                    if (doesExist) {
-                                     setState(() {
+                                      final doesExist = await FirebaseFirestore
+                                        .instance
+                                        .collection('users')
+                                        .where('username',
+                                            isEqualTo: username.text)
+                                        .get();
+
+                                    if (doesExist.docs.isNotEmpty) {
+                                      setState(() {
                                         error =
-                                          "Username already exists, try a different one.";
-                                     });
+                                            "Username already exists, try a different one.";
+                                      });
                                     } else {
                                       Map<String, dynamic> updatedProfile = {
                                         'username': username.text,
@@ -495,9 +504,12 @@ class _complete extends State<complete> {
                                             "${_yearController.text}-${_monthController.text}-${_dayController.text}",
                                       };
 
-                                      int rowsAffected = await StudentProfileDB
-                                          .updateStudentProfile(
-                                              widget.userID, updatedProfile);
+                                      DocumentReference userDoc =
+                                          FirebaseFirestore.instance
+                                              .collection('users')
+                                              .doc(widget.userID);
+
+                                      await userDoc.update(updatedProfile);
 
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
@@ -508,7 +520,7 @@ class _complete extends State<complete> {
                                     }
                                   } else {
                                     setState(() {
-                                      dateErr = "please enter a valid Date";
+                                      dateErr = "Please enter a valid Date";
                                     });
                                   }
                                 } else if (_selectedGender == null) {
@@ -540,6 +552,8 @@ class _complete extends State<complete> {
           ),
         ));
   }
+
+  
 
   Widget togglePassword() {
     return IconButton(

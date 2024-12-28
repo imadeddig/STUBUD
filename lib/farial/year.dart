@@ -1,9 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stubudmvp/database/StudentProfile.dart';
 
 class Year extends StatefulWidget {
-   final int userID;
+  final String userID;
 
   const Year({super.key, required this.userID});
 
@@ -31,7 +32,7 @@ class _YearState extends State<Year> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: Container(
-           margin: const EdgeInsets.only(top: 15, left: 5), 
+          margin: const EdgeInsets.only(top: 15, left: 5),
           height: 40,
           width: 40,
           decoration: const BoxDecoration(
@@ -46,27 +47,26 @@ class _YearState extends State<Year> {
           ),
         ),
         actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(
-                'Done',
-                style: GoogleFonts.outfit(
-                  textStyle: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF7C90D6),
-                  ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'Done',
+              style: GoogleFonts.outfit(
+                textStyle: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF7C90D6),
                 ),
               ),
             ),
-          ],
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-        
             Padding(
               padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.1),
               child: Text(
@@ -80,12 +80,9 @@ class _YearState extends State<Year> {
                 ),
               ),
             ),
-
-          
-
             Padding(
               padding: EdgeInsets.symmetric(
-                vertical: 10,
+                  vertical: 10,
                   horizontal: MediaQuery.of(context).size.width * 0.05),
               child: Container(
                 decoration: BoxDecoration(
@@ -98,24 +95,25 @@ class _YearState extends State<Year> {
                 child: Column(
                   children: years.map((year) {
                     return GestureDetector(
-                      onTap: () async{
+                      onTap: () async {
                         setState(() {
                           selectedYear = year;
                         });
 
-                         Map<String, dynamic> updatedProfile = {
-                                      'level': selectedYear,
-                                         };
+                        Map<String, dynamic> updatedProfile = {
+                          'level': selectedYear,
+                        };
 
-                                    int rowsAffected = await StudentProfileDB
-                                        .updateStudentProfile(
-                                            widget.userID, updatedProfile);
+                        DocumentReference userDoc = FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(widget.userID);
+                        await userDoc.update(updatedProfile);
                       },
                       child: Container(
                         child: Row(
                           children: [
                             Container(
-                                margin: const EdgeInsets.all( 5),
+                                margin: const EdgeInsets.all(5),
                                 width: 5,
                                 child: (selectedYear == year)
                                     ? const Icon(
@@ -125,11 +123,10 @@ class _YearState extends State<Year> {
                                     : Container(color: Colors.white)),
                             const SizedBox(width: 20),
                             Container(
-                              width:MediaQuery.of(context).size.width*0.7,
+                              width: MediaQuery.of(context).size.width * 0.7,
                               margin: const EdgeInsets.symmetric(vertical: 5),
                               padding: const EdgeInsets.all(10),
                               decoration: const BoxDecoration(
-                               
                                 border: Border(
                                   bottom: BorderSide(
                                     color: Color.fromRGBO(124, 144, 214, 0.5),

@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stubudmvp/farial/shots.dart';
 import 'package:stubudmvp/database/StudentProfile.dart';
 
 class Interest5 extends StatefulWidget {
-  final int userID;
+  final String userID;
 
   const Interest5({super.key, required this.userID});
 
@@ -32,7 +33,7 @@ class _Interest5State extends State<Interest5> {
             child: TextButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => Shots(userID: widget.userID)));
+                      builder: (context) => Shots(userID: widget.userID)));
                 },
                 child: Text(
                   "Skip",
@@ -215,8 +216,11 @@ class _Interest5State extends State<Interest5> {
                   'location': location,
                 };
 
-                int rowsAffected = await StudentProfileDB.updateStudentProfile(
-                    widget.userID, updatedProfile);
+                await FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(widget.userID)
+                    .update(updatedProfile);
+                    
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => Shots(userID: widget.userID)));
               },

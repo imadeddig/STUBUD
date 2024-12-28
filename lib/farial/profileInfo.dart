@@ -1,16 +1,70 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 class Profileinfo extends StatefulWidget {
-  const Profileinfo({super.key});
+  final String userID;
+  const Profileinfo({super.key, required this.userID});
 
   @override
   State<Profileinfo> createState() => _ProfileinfoState();
 }
 
 class _ProfileinfoState extends State<Profileinfo> {
+  final List<String> years = [
+    "first year 1st (L1/1PC)",
+    "second year 2nd (L2/2PC)",
+    "third year 3rd (L3/1SC)",
+    "fourth year 4th (M1/2SC)",
+    "fivth year 5th (M2/3SC)",
+    "sixth year 6th",
+    "seventh year 7th",
+  ];
+  final List<String> specialities = [
+    "Artificial Intelligence",
+    "Data Science",
+    "Software Engineering",
+    "Networks",
+    "Data Science",
+    "Software Engineering",
+    "Networks",
+  ];
+  void showSelectionDialog(BuildContext context, String title,
+      List<String> options, Function(String?) onSelected) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(title),
+          content: SingleChildScrollView(
+            child: Column(
+              children: options.map((option) {
+                return ListTile(
+                  title: Text(option),
+                  onTap: () {
+                    Navigator.pop(context);
+                    onSelected(option);
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                onSelected(null); // Handle cancellation
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   final List<String> dayTimes = ['Morning', 'Afternoon', 'Evening'];
   final List<String> interests = [
     'coding',
@@ -49,15 +103,57 @@ class _ProfileinfoState extends State<Profileinfo> {
     'add more'
   };
 
-  String? university = "The National Higher School of AI";
-  String? field = "Computer Science";
-  String? level = "2nd Year";
-  String? location = "Somewhere,Souk-Ahras,Algeria";
-  String? bio = "Ijbol cccccccccccccccccccccccccc";
+  String? university = "";
+  String? field = "";
+  String? level = "";
+  String? location = "";
+  String? bio = "";
+  String? name = "";
+  String? dof = "";
+  String? gender = "";
 
   List<File?> images = List<File?>.filled(4, null);
 
   final ImagePicker imagePicker = ImagePicker();
+
+  Future<void> fetchFirebaseImages() async {
+    try {
+      final shotsCollection = await FirebaseFirestore.instance
+          .collection('userImages')
+          .doc(widget.userID)
+          .collection('shots')
+          .get();
+
+      setState(() {
+        int index = 0;
+        for (var doc in shotsCollection.docs) {
+          if (doc.data().containsKey('imagePath') &&
+              doc['imagePath'] is String) {
+            if (index < images.length) {
+              images[index] = File(doc['imagePath']);
+              index++;
+            }
+          }
+        }
+      });
+      print('Fetched image URLs: ${images.map((file) => file?.path).toList()}');
+    } catch (e) {
+      print('Error fetching Firebase images: $e');
+    }
+  }
+
+  Future<void> deleteImage(int index) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('userImages')
+        .doc(widget.userID)
+        .collection('shots')
+        .where('imagePath', isEqualTo: images[index])
+        .get();
+
+    if (snapshot.docs.isNotEmpty) {
+      await snapshot.docs[0].reference.delete();
+    }
+  }
 
   Future<void> uploadImage(ImageSource source, int index) async {
     final pickedImage = await imagePicker.pickImage(source: source);
@@ -65,8 +161,33 @@ class _ProfileinfoState extends State<Profileinfo> {
       setState(() {
         images[index] = File(pickedImage.path);
       });
+      await saveImageToDatabase(widget.userID, pickedImage.path);
     } else {
       print('No image selected.');
+    }
+  }
+
+  Future<void> saveImageToDatabase(String userID, String imagePath) async {
+    try {
+      CollectionReference shotsRef = FirebaseFirestore.instance
+          .collection('userImages')
+          .doc(userID)
+          .collection('shots');
+
+      QuerySnapshot snapshot = await shotsRef.get();
+
+      if (snapshot.docs.length >= 4) {
+        print("User already has 4 shots. Cannot add more.");
+        return;
+      }
+
+      await shotsRef.add({
+        'imagePath': imagePath,
+      });
+
+      print("Image saved successfully for userID: $userID");
+    } catch (e) {
+      print("Error saving image: $e");
     }
   }
 
@@ -156,6 +277,30 @@ class _ProfileinfoState extends State<Profileinfo> {
     );
   }
 
+  void fetchInfo() async {
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userID)
+        .get();
+    setState(() {
+      bio = userDoc['bio'];
+      university = userDoc['school'];
+      field = userDoc['field'];
+      level = userDoc['level'];
+      location = userDoc['location'];
+      name = userDoc['username'];
+      dof = userDoc['dateOfBirth'];
+      gender = userDoc['gender'];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchFirebaseImages();
+    fetchInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -192,7 +337,13 @@ class _ProfileinfoState extends State<Profileinfo> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               GestureDetector(
-                onTap: () => _showImageSourceDialog(context, 0),
+                onTap: () {
+                  if (images[0] == null) {
+                    _showImageSourceDialog(context, 0);
+                  } else {
+                    return;
+                  }
+                },
                 child: Container(
                   width: 220,
                   height: 260,
@@ -228,12 +379,13 @@ class _ProfileinfoState extends State<Profileinfo> {
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
-                                images[0] = null; // Remove the image
+                                images[0] = null;
                               });
+                              deleteImage(0);
                             },
                             child: const Icon(
                               Icons.close,
-                              color:Color.fromARGB(255, 255, 255, 255), 
+                              color: Color.fromARGB(255, 255, 255, 255),
                               size: 30,
                             ),
                           ),
@@ -250,7 +402,13 @@ class _ProfileinfoState extends State<Profileinfo> {
                   children: [
                     for (int i = 1; i <= 3; i++) ...[
                       GestureDetector(
-                        onTap: () => _showImageSourceDialog(context, i),
+                        onTap: () {
+                          if (images[i] == null) {
+                            _showImageSourceDialog(context, i);
+                          } else {
+                            return;
+                          }
+                        },
                         child: Container(
                           width: 80,
                           height: 80,
@@ -291,12 +449,13 @@ class _ProfileinfoState extends State<Profileinfo> {
                                   child: GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        images[i] = null; // Remove the image
+                                        images[i] = null;
                                       });
+                                      deleteImage(i);
                                     },
                                     child: const Icon(
                                       Icons.close,
-                                      color: Color.fromARGB(255, 255, 255, 255), 
+                                      color: Color.fromARGB(255, 255, 255, 255),
                                       size: 30,
                                     ),
                                   ),
@@ -316,9 +475,9 @@ class _ProfileinfoState extends State<Profileinfo> {
             child: Column(
               children: [
                 const SizedBox(height: 10),
-                buildInfoRow("Name", "Emily"),
-                buildInfoRow("Date of Birth", "September 27th, 2004"),
-                buildInfoRow("Gender", "Female"),
+                buildInfoRow("Name", "$name"),
+                buildInfoRow("Date of Birth", "$dof"),
+                buildInfoRow("Gender", "$gender"),
                 const Divider(),
                 buildInfoRow(
                   "University",
@@ -328,9 +487,15 @@ class _ProfileinfoState extends State<Profileinfo> {
                     showEditDialog(
                       context,
                       "$university",
-                      (newText) {
+                      (newText) async {
                         setState(() {
-                          university = newText; // Update the displayed text
+                          university = newText;
+                        });
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(widget.userID)
+                            .update({
+                          'school': university,
                         });
                       },
                     );
@@ -341,13 +506,22 @@ class _ProfileinfoState extends State<Profileinfo> {
                   "$field",
                   hasArrow: true,
                   onTap: () {
-                    showEditDialog(
+                    showSelectionDialog(
                       context,
-                      "$field",
-                      (newText) {
-                        setState(() {
-                          field = newText; // Update the displayed text
-                        });
+                      "Select Field",
+                      specialities,
+                      (selectedField) async {
+                        if (selectedField != null) {
+                          setState(() {
+                            field = selectedField;
+                          });
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(widget.userID)
+                              .update({
+                            'field': field,
+                          });
+                        }
                       },
                     );
                   },
@@ -357,13 +531,22 @@ class _ProfileinfoState extends State<Profileinfo> {
                   "$level",
                   hasArrow: true,
                   onTap: () {
-                    showEditDialog(
+                    showSelectionDialog(
                       context,
-                      "$level",
-                      (newText) {
-                        setState(() {
-                          level = newText; // Update the displayed text
-                        });
+                      "Select Educational Level",
+                      years,
+                      (selectedLevel) async {
+                        if (selectedLevel != null) {
+                          setState(() {
+                            level = selectedLevel;
+                          });
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(widget.userID)
+                              .update({
+                            'level': level,
+                          });
+                        }
                       },
                     );
                   },
@@ -387,10 +570,14 @@ class _ProfileinfoState extends State<Profileinfo> {
                     showEditDialog(
                       context,
                       "$location",
-                      (newText) {
+                      (newText) async {
                         setState(() {
-                          location = newText; // Update the displayed text
+                          location = newText;
                         });
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(widget.userID)
+                            .update({'location': location});
                       },
                     );
                   },
@@ -400,13 +587,19 @@ class _ProfileinfoState extends State<Profileinfo> {
                   "Bio",
                   "$bio",
                   hasArrow: true,
-                  onTap: () {
+                  onTap: () async {
                     showEditDialog(
                       context,
                       "$bio",
-                      (newText) {
+                      (newText) async {
                         setState(() {
                           bio = newText;
+                        });
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(widget.userID)
+                            .update({
+                          'bio': bio,
                         });
                       },
                     );
@@ -991,15 +1184,14 @@ void showEditDialog(
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(); 
+              Navigator.of(context).pop();
             },
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
-              onSave(controller
-                  .text); 
-              Navigator.of(context).pop(); 
+              onSave(controller.text);
+              Navigator.of(context).pop();
             },
             child: const Text('Save'),
           ),

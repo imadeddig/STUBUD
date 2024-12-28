@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:stubudmvp/imad/exploreBuddiesPage.dart';
 
 class Filterpage extends StatefulWidget {
-   final int userID;
+   final String userID;
   const Filterpage ({super.key, required this.userID});
 
   @override

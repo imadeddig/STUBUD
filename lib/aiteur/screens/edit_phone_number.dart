@@ -94,10 +94,10 @@ class _EditPhoneNumberScreenState extends State<EditPhoneNumberScreen> {
               TextField(
                 controller: _phoneNumberController, 
                 keyboardType: TextInputType.phone,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Enter your phone number',
                   hintStyle: AppStyles.subtitleTextStyle,
-                  border: const UnderlineInputBorder(),
+                  border: UnderlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 15),

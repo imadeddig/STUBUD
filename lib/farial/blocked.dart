@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Blocked extends StatefulWidget {
-  const Blocked({super.key});
+ final String userID;
+
+  const Blocked({super.key, required this.userID});
 
   @override
   State<Blocked> createState() => _BlockedState();

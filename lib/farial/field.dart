@@ -1,9 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stubudmvp/database/StudentProfile.dart';
 
 class Field extends StatefulWidget {
-  final int userID;
+  final String userID;
 
   const Field({super.key, required this.userID});
 
@@ -140,10 +141,10 @@ class _FieldState extends State<Field> {
                           'field': selectedSpeciality,
                         };
 
-                        int rowsAffected =
-                            await StudentProfileDB.updateStudentProfile(
-                                widget.userID, updatedProfile);
-                        
+                        DocumentReference userDoc = FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(widget.userID);
+                        await userDoc.update(updatedProfile);
                       },
                       child: Container(
                         child: Row(

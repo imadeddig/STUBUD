@@ -1,8 +1,8 @@
-
 import 'package:flutter/material.dart';
-import 'package:stubudmvp/database/StudentProfile.dart';
+import 'package:stubudmvp/farial/auth/firebase_auth.dart';
 import '../farial/verify.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class signIn extends StatefulWidget {
   const signIn({super.key});
@@ -12,7 +12,47 @@ class signIn extends StatefulWidget {
 }
 
 class _signIn extends State<signIn> {
+  final FirebaseAuthService _auth = FirebaseAuthService();
+  late FirebaseFirestore firestore;
+  late CollectionReference users;
+  String fullName = "";
+
+  String _statusMessage = "";
+
   final TextEditingController email = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    firestore = FirebaseFirestore.instance;
+    users = firestore.collection('users');
+  }
+
+  String extractFullNameFromEmail(String email) {
+    List<String> parts = email.split('@');
+
+    if (parts.isNotEmpty) {
+      String namePart = parts[0];
+      List<String> nameParts = namePart.split('.');
+      return nameParts.join(' ');
+    } else {
+      return '';
+    }
+  }
+
+  void _sendCode() async {
+    String _email = email.text.trim();
+    if (_email.isNotEmpty) {
+      await _auth.sendVerificationCode(_email);
+      setState(() {
+        _statusMessage = "Verification code sent to $_email.";
+      });
+    } else {
+      setState(() {
+        _statusMessage = "Please enter a valid email.";
+      });
+    }
+  }
 
   bool isChecked = false;
   bool see = true;
@@ -25,14 +65,6 @@ class _signIn extends State<signIn> {
     );
 
     return emailRegex.hasMatch(email);
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    error = "";
-    termsErr = "";
   }
 
   @override
@@ -73,14 +105,12 @@ class _signIn extends State<signIn> {
                         textStyle: TextStyle(
                             fontSize: font, fontWeight: FontWeight.w500)),
                   ),
-                  Text(
-                    "S",
-                    style: GoogleFonts.outfit(
-                        textStyle: TextStyle(
-                            fontSize: font,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xFF7C90D6))),
-                  ),
+                  Text("S",
+                      style: GoogleFonts.outfit(
+                          textStyle: TextStyle(
+                              fontSize: font,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF7C90D6)))),
                   Text("tu",
                       style: GoogleFonts.outfit(
                         textStyle: TextStyle(
@@ -208,37 +238,56 @@ class _signIn extends State<signIn> {
                               setState(() {
                                 error = "";
                               });
+                              if (isChecked) {
+                                try {
+                                  QuerySnapshot querySnapshot = await users
+                                      .where('email',
+                                          isEqualTo: email.text.trim())
+                                      .get();
+                                  fullName =
+                                      extractFullNameFromEmail(email.text);
+                                  if (querySnapshot.docs.isEmpty) {
+                                    DocumentReference docRef = await users.add({
+                                      'email': email.text.trim(),
+                                      'school': "unkown",
+                                      'fullName': fullName,
+                                      'active':true,
+                                      'bio':"",
+                                      'school':"",
+                                      'profilePic':"",
+                                    });
 
-                              try {
-                                Map<String, dynamic> profile = {
-                                  'email': email.text,
-                                };
-                                await StudentProfileDB.insertStudentProfile(
-                                    profile);
+                                    String userId = docRef.id;
 
-                                
-                                final userID =
-                                    await StudentProfileDB.getCurrentUserID(email.text);
+                                    _sendCode();
 
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => Verify(userID: userID!),
-                                ));
-                              } catch (e) {
-                                print("Error: $e");
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) => Verify(
+                                          email: email.text.trim(),
+                                          userID: userId),
+                                    ));
+                                  } else {
+                                    setState(() {
+                                      error =
+                                          "This email is already registered.";
+                                    });
+                                  }
+                                } catch (e) {
+                                  print("Error: $e");
+                                  setState(() {
+                                    error =
+                                        "Failed to sign in. Please try again.";
+                                  });
+                                }
+                              } else {
                                 setState(() {
-                                  error =
-                                      "Failed to sign in. Please try again.";
+                                  termsErr = "Agree with Terms";
                                 });
                               }
                             } else {
                               setState(() {
-                                error = "Enter a valid email";
-                              });
-                            }
-
-                            if (!isChecked) {
-                              setState(() {
-                                termsErr = "Agree with Terms";
+                                error = "Enter a valid email.";
                               });
                             }
                           },
@@ -276,35 +325,4 @@ class _signIn extends State<signIn> {
             ? const Icon(Icons.visibility)
             : const Icon(Icons.visibility_off));
   }
-
-  
 }
-
-class UserModel with ChangeNotifier {
-  int? _userID;
-
-  int? get userID => _userID;
-
-  // Set userID manually
-  void setUserID(int userID) {
-    _userID = userID;
-    notifyListeners();
-  }
-
-  // Fetch userID based on email and update the state
-  Future<void> fetchUserID(String email) async {
-    try {
-      final fetchedUserID = await StudentProfileDB.getCurrentUserID(email); // Get userID based on email
-      if (fetchedUserID != null) {
-        _userID = fetchedUserID; // Update the _userID with fetched value
-        notifyListeners(); // Notify listeners of the change
-      } else {
-        print("No user found for the given email.");
-      }
-    } catch (error) {
-      print("Error fetching userID: $error");
-    }
-  }
-}
-
-

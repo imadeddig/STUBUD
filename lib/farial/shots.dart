@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -6,7 +7,7 @@ import 'package:stubudmvp/farial/beCool.dart';
 import '../database/UserImages.dart';
 
 class Shots extends StatefulWidget {
-  final int userID;
+  final String userID;
 
   const Shots({super.key, required this.userID});
 
@@ -25,22 +26,34 @@ class _ShotsState extends State<Shots> {
         images[index] = File(pickedImage.path);
       });
 
-      await saveImageToDatabase(pickedImage.path);
+      await saveImageToDatabase(widget.userID, pickedImage.path);
+
     } else {
       print('No image selected.');
     }
   }
 
-  Future<void> saveImageToDatabase(String imagePath) async {
+  Future<void> saveImageToDatabase(String userID, String imagePath) async {
     try {
-      int result = await UserImagesDB.insertUserImage(widget.userID, imagePath);
-      if (result != -1) {
-        print("Image saved to database");
-      } else {
-        print("Failed to save image to database");
+      CollectionReference shotsRef = FirebaseFirestore.instance
+          .collection('userImages')
+          .doc(userID)
+          .collection('shots');
+
+      QuerySnapshot snapshot = await shotsRef.get();
+
+      if (snapshot.docs.length >= 4) {
+        print("User already has 4 shots. Cannot add more.");
+        return;
       }
+
+      await shotsRef.add({
+        'imagePath': imagePath,
+      });
+
+      print("Image saved successfully for userID: $userID");
     } catch (e) {
-      print("Error saving image to database: $e");
+      print("Error saving image: $e");
     }
   }
 
@@ -141,8 +154,8 @@ class _ShotsState extends State<Shots> {
             ),
             child: TextButton(
               onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => beCool(userID:widget.userID)));
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => beCool(userID: widget.userID)));
               },
               child: Text(
                 "Skip",
@@ -189,8 +202,8 @@ class _ShotsState extends State<Shots> {
                     child: LinearProgressIndicator(
                       value: 1,
                       backgroundColor: Colors.grey[300],
-                      valueColor:
-                          const AlwaysStoppedAnimation<Color>(Color(0xFF7C90D6)),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                          Color(0xFF7C90D6)),
                     ),
                   ),
                 ),
@@ -214,8 +227,8 @@ class _ShotsState extends State<Shots> {
                 "Share your favorite shots!",
                 textAlign: TextAlign.center,
                 style: GoogleFonts.outfit(
-                  textStyle:
-                      const TextStyle(fontSize: 38, fontWeight: FontWeight.w700),
+                  textStyle: const TextStyle(
+                      fontSize: 38, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
@@ -235,10 +248,9 @@ class _ShotsState extends State<Shots> {
               ),
             ),
             const SizedBox(height: 30),
-            
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [                
+              children: [
                 GestureDetector(
                   onTap: () => _showImageSourceDialog(context, 0),
                   child: Container(
@@ -357,7 +369,7 @@ class _ShotsState extends State<Shots> {
                           const Icon(Icons.arrow_forward, color: Colors.black),
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>  beCool(userID: widget.userID,)));
+                            builder: (context) => beCool(userID:widget.userID)));
                       },
                     ),
                   ),

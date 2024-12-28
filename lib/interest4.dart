@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:stubudmvp/interest5.dart';
 
 class Interest4 extends StatefulWidget {
- final int userID;
+ final String userID;
 
   const Interest4({super.key, required this.userID});
 

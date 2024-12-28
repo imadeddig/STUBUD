@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:stubudmvp/database/StudentProfile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:stubudmvp/database/initialization.dart';
 import 'package:stubudmvp/interest1.dart';
 
-
 class Infor extends StatefulWidget {
-  final int userID;
+  final String userID;
 
   const Infor({super.key, required this.userID});
 
@@ -14,7 +14,8 @@ class Infor extends StatefulWidget {
 }
 
 class _InforState extends State<Infor> {
-  Map<String, dynamic>? studentProfile;
+    Map<String, dynamic>? studentProfile;
+  String school = ''; 
 
   @override
   void initState() {
@@ -22,13 +23,61 @@ class _InforState extends State<Infor> {
     _loadStudentProfile();
   }
 
-  // Load the student profile based on the userID
+
   Future<void> _loadStudentProfile() async {
-    final profile = await StudentProfileDB.getStudentProfileByUserID(widget.userID);
-    setState(() {
-      studentProfile = profile;
-    });
+    try {
+      // Fetch the profile from Firestore using userID
+      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(widget.userID)
+          .get();
+
+      if (docSnapshot.exists) {
+        setState(() {
+          studentProfile = docSnapshot.data() as Map<String, dynamic>;
+          _extractSchoolName(); // Extract the school name after loading the profile
+        });
+      } else {
+        print("User not found in Firestore.");
+      }
+    } catch (e) {
+      print("Error loading student profile: $e");
+    }
   }
+
+  void _extractSchoolName() {
+  if (studentProfile == null) {
+    print('Student profile is null');
+    return;
+  }
+
+  String? email = studentProfile?['email'];
+  if (email == null || !email.contains('@')) {
+    print('Invalid or missing email: $email');
+    return;
+  }
+
+  setState(() {
+    school = extractSchoolName(email);
+    print('Extracted School Name: $school');
+  });
+}
+
+
+  String extractSchoolName(String email) {
+  List<String> parts = email.split('@');
+  if (parts.length > 1) {
+    String domain = parts[1];
+    List<String> domainParts = domain.split('.');
+    if (domainParts.isNotEmpty) {
+      return domainParts[0];
+    }
+  }
+  return ''; // Return empty string for invalid email
+}
+
+ 
+
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +115,7 @@ class _InforState extends State<Infor> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.1)),
                       child: Text(
-                        "You are officially in !",
+                        "You are officially in!",
                         style: GoogleFonts.outfit(
                           fontSize: 28,
                           fontWeight: FontWeight.w700,
@@ -78,7 +127,7 @@ class _InforState extends State<Infor> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.14)),
                       child: Text(
-                        "based on your progress account, here is what we know about you so far !",
+                        "Based on your progress account, here is what we know about you so far!",
                         textAlign: TextAlign.center,
                         style: GoogleFonts.outfit(
                           fontWeight: FontWeight.w500,
@@ -121,7 +170,7 @@ class _InforState extends State<Infor> {
                     ),
                   ),
                   Text(
-                    studentProfile?['username'] ?? 'Loading...', // Use the dynamic name
+                    studentProfile?['username'] ?? 'Loading...',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
@@ -142,7 +191,7 @@ class _InforState extends State<Infor> {
                     ),
                   ),
                   Text(
-                    studentProfile?['dateOfBirth'] ?? 'Loading...', // Dynamic Date of Birth
+                    studentProfile?['dateOfBirth'] ?? 'Loading...',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
@@ -163,7 +212,7 @@ class _InforState extends State<Infor> {
                     ),
                   ),
                   Text(
-                    studentProfile?['gender'] ?? 'Loading...', // Dynamic Gender
+                    studentProfile?['gender'] ?? 'Loading...',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
@@ -194,7 +243,7 @@ class _InforState extends State<Infor> {
                     height: (screenHeight * 0.005),
                   ),
                   Text(
-                    "school/university",
+                    "School/University",
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
@@ -203,7 +252,7 @@ class _InforState extends State<Infor> {
                     ),
                   ),
                   Text(
-                    studentProfile?['school'] ?? 'Loading...', // Dynamic School
+                     school,
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -223,7 +272,7 @@ class _InforState extends State<Infor> {
                     ),
                   ),
                   Text(
-                    studentProfile?['field'] ?? 'Loading...', // Dynamic Field
+                    studentProfile?['field'] ?? 'Loading...',
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -243,7 +292,7 @@ class _InforState extends State<Infor> {
                     ),
                   ),
                   Text(
-                    studentProfile?['level'] ?? 'Loading...', // Dynamic Level
+                    studentProfile?['level'] ?? 'Loading...',
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -275,7 +324,7 @@ class _InforState extends State<Infor> {
               padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.33), vertical: (screenHeight * 0.03)),
               child: MaterialButton(
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>Interest1(userID:widget.userID)));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => Interest1(userID: widget.userID)));
                 },
                 height: 55,
                 color: const Color(0XFF7C90D6),
@@ -304,3 +353,4 @@ class _InforState extends State<Infor> {
     );
   }
 }
+

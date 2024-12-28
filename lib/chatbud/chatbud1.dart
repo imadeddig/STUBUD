@@ -5,7 +5,7 @@ import 'package:stubudmvp/imad/exploreBuddiesPage.dart';
 import 'list_messages.dart';
 
 class Chatbud1 extends StatefulWidget {
-    final int userID;
+    final String userID;
   const Chatbud1 ({super.key, required this.userID});
 
   @override

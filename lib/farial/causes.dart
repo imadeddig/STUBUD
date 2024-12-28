@@ -1,14 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stubudmvp/farial/sure.dart';
 
 class Causes extends StatefulWidget {
-  const Causes({super.key});
+  final String userID;
+  const Causes({super.key, required this.userID});
 
   @override
   State<Causes> createState() => _CausesState();
 }
 
 class _CausesState extends State<Causes> {
+  final issues = FirebaseFirestore.instance.collection('issues');
+  final TextEditingController _textController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,8 +72,16 @@ class _CausesState extends State<Causes> {
                       color: Colors.black),
                 ),
                 IconButton(
-                    onPressed: () {
-                       Navigator.of(context).pushNamed("sure");
+                    onPressed: () async {
+                      QuerySnapshot snapshot = await issues
+                          .where('userID', isEqualTo: widget.userID)
+                          .get();
+                      DocumentReference docRef = snapshot.docs[0].reference;
+                      await docRef.update({
+                        'cause': 'app crashes too often',
+                      });
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => Sure(userID: widget.userID)));
                     },
                     icon: const Icon(Icons.arrow_forward_ios,
                         size: 18, color: Colors.grey))
@@ -88,8 +102,16 @@ class _CausesState extends State<Causes> {
                       color: Colors.black),
                 ),
                 IconButton(
-                    onPressed: () {
-                       Navigator.of(context).pushNamed("sure");
+                    onPressed: () async {
+                       QuerySnapshot snapshot = await issues
+                          .where('userID', isEqualTo: widget.userID)
+                          .get();
+                      DocumentReference docRef = snapshot.docs[0].reference;
+                      await docRef.update({
+                        'cause':  'my matches are gone',
+                      });
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => Sure(userID: widget.userID)));
                     },
                     icon: const Icon(Icons.arrow_forward_ios,
                         size: 18, color: Colors.grey))
@@ -110,8 +132,17 @@ class _CausesState extends State<Causes> {
                       color: Colors.black),
                 ),
                 IconButton(
-                    onPressed: () {
-                       Navigator.of(context).pushNamed("sure");
+                    onPressed: () async {
+                    QuerySnapshot snapshot = await issues
+                          .where('userID', isEqualTo: widget.userID)
+                          .get();
+                      DocumentReference docRef = snapshot.docs[0].reference;
+                      await docRef.update({
+                        'cause':  "i'm seeing people more than once",
+                      });
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => Sure(userID: widget.userID)));
                     },
                     icon: const Icon(Icons.arrow_forward_ios,
                         size: 18, color: Colors.grey))
@@ -132,8 +163,17 @@ class _CausesState extends State<Causes> {
                       color: Colors.black),
                 ),
                 IconButton(
-                    onPressed: () {
-                       Navigator.of(context).pushNamed("sure");
+                    onPressed: () async {
+                    QuerySnapshot snapshot = await issues
+                          .where('userID', isEqualTo: widget.userID)
+                          .get();
+                      DocumentReference docRef = snapshot.docs[0].reference;
+                      await docRef.update({
+                        'cause': 'horrible UI/UX',
+                      });
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => Sure(userID: widget.userID)));
                     },
                     icon: const Icon(Icons.arrow_forward_ios,
                         size: 18, color: Colors.grey))
@@ -158,9 +198,10 @@ class _CausesState extends State<Causes> {
                       fontWeight: FontWeight.w400,
                       color: Colors.black),
                 ),
-                const TextField(
+                TextField(
+                   controller: _textController,
                   textAlignVertical: TextAlignVertical.center,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(
                         color: Colors.grey,
@@ -183,7 +224,7 @@ class _CausesState extends State<Causes> {
               ],
             ),
           ),
-          const SizedBox(height:50),
+          const SizedBox(height: 50),
           Center(
             child: Container(
               decoration: BoxDecoration(
@@ -191,8 +232,19 @@ class _CausesState extends State<Causes> {
                 borderRadius: BorderRadius.circular(40),
               ),
               child: MaterialButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed("sure");
+                onPressed: () async {
+                  final enteredText=_textController.text;
+                  if(enteredText.isNotEmpty){
+                     QuerySnapshot snapshot = await issues
+                          .where('userID', isEqualTo: widget.userID)
+                          .get();
+                      DocumentReference docRef = snapshot.docs[0].reference;
+                      await docRef.update({
+                        'cause': enteredText,
+                      });
+                  }
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => Sure(userID: widget.userID)));
                 },
                 height: 55,
                 minWidth: 190,
