@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stubudmvp/chatbud/chatbud1.dart';
 import 'package:stubudmvp/imad/filterPage.dart';
@@ -22,7 +25,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
   bool noMoreUsers = false;
   List<Map<String, dynamic>> _users = [];
   bool _isLoading = true;
-
+  Map<String, dynamic> filters = {};
   @override
   void initState() {
     print('initial state, users list length is ${ _users.length}');
@@ -30,35 +33,90 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
     _fetchData();
   }
 
-  Future<void> _fetchData() async {
+Future<void> _fetchData({Map<String, dynamic>? appliedFilters}) async  {
+      setState(() {
+    _isLoading = true; // Show loading indicator while fetching data
+  });
+  int minAge=-1;
+  int maxAge=-1;
+
     try {
-      //print('UserID: ${widget.userID}');
-      final loggedInUserDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(widget.userID)
-          .get();
+      final loggedInUserDoc = await FirebaseFirestore.instance.collection('users').doc(widget.userID).get();
       if (!loggedInUserDoc.exists) {
         throw Exception("Logged-in user document not found");
       }
 
-      List<String> friends =
-          List<String>.from(loggedInUserDoc.data()?['friendsList'] ?? []);
+      List<String> friends = List<String>.from(loggedInUserDoc.data()?['friendsList'] ?? []);
 
-      final snapshot =
-          await FirebaseFirestore.instance.collection('users').get();
-      final documents = snapshot.docs
-          .where((doc) =>
-              doc.id != widget.userID &&
-              !friends.contains(doc.id)) // Exclude logged-in user and friends
-          .toList();
 
-      //  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-      //Create a document reference to the "users" collection
-      // CollectionReference users = firestore.collection('users');
+final currentUserLocation = loggedInUserDoc.data()?['location'];
+
+
+  Query query = FirebaseFirestore.instance.collection('users');
+
+     if (appliedFilters != null) {
+      if (appliedFilters.containsKey('gender') &&
+          appliedFilters['gender'].isNotEmpty) {
+        query = query.where('gender', isEqualTo: appliedFilters['gender']);
+      }
+  if (appliedFilters.containsKey('ageRange')) {
+    final RangeValues ageRange = appliedFilters['ageRange']; 
+    minAge = ageRange.start.toInt();
+    maxAge = ageRange.end.toInt();
+  }
+    }
+
+    final snapshot = await query.get();
+    final documents = snapshot.docs.where((doc) {
+      return doc.id != widget.userID && !friends.contains(doc.id);
+    }).toList();
+
 
       _users = documents.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
+
+          
+  // Convert Firestore Timestamp to DateTime
+  DateTime? dateOfBirth;
+  int? age;
+  if (data.containsKey('dateOfBirth') && data['dateOfBirth'] != null) {
+    dateOfBirth = (data['dateOfBirth'] as Timestamp).toDate();
+
+    // Calculate age if dateOfBirth is valid
+    final now = DateTime.now();
+    age = now.year - dateOfBirth.year;
+
+    // Adjust age if the birthday hasn't occurred yet this year
+    if (now.month < dateOfBirth.month || 
+        (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
+      age--;
+    }
+  }
+        double? distance;
+      if (currentUserLocation != null && data['location'] != null) {
+        final currentUserGeoPoint = currentUserLocation as GeoPoint;
+        final otherUserGeoPoint = data['location'] as GeoPoint;
+       print('555555555555555555555555555555555555555555555555555555555555');
+        print(otherUserGeoPoint);
+        print(otherUserGeoPoint.latitude,);
+        print(otherUserGeoPoint.longitude,);
+
+
+                print(currentUserGeoPoint.latitude,);
+        print(currentUserGeoPoint.longitude,);
+
+
+        // Calculate the distance between the two locations in meters
+        distance =  Geolocator.distanceBetween(
+          currentUserGeoPoint.latitude,
+          currentUserGeoPoint.longitude,
+          otherUserGeoPoint.latitude,
+          otherUserGeoPoint.longitude,
+        );
+        distance=distance/1000;
+      }
+
         return {
           'userID': doc.id, // Add the userID here
           'name': data['fullName'],
@@ -75,6 +133,9 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
           'values': data['values'] ?? [],
           'images': data['images'] ?? [],
           'imagesSize': (data['images'] ?? []).length,
+          'dateOfBirth' :data['dateOfBirth'] ?? [],
+          'age': age, // Add the calculated age
+            'distance': distance?.toInt() ?? 0.0, // Add distance field
         };
       }).toList();
     } catch (e) {
@@ -84,7 +145,18 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
         _isLoading = false;
       });
     }
+
+
+    if(minAge>0 && maxAge>0){
+_users = _users.where((user) {
+  return user['age'] >= minAge && user['age'] <= maxAge;
+}).toList();
+    }
+
         print('after getting data from database, users list length is ${ _users.length}');
+        if(_users.isEmpty){
+          noMoreUsers=true;
+        }
   }
   
 
@@ -187,20 +259,11 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
 
   @override
   Widget build(BuildContext context) {
+
     double screenHeight = MediaQuery.of(context).size.height;
-
     double appBarHeight = AppBar().preferredSize.height;
-
     double bottomBarHeight = kBottomNavigationBarHeight;
 
-    var currentUser = _users[_currentUserIndex];
-    if (_isLoading) {
-      return Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
@@ -242,19 +305,46 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                 size: 30,
                 color: Color.fromARGB(255, 0, 0, 0),
               ),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            Filterpage(userID: widget.userID)));
-              },
+
+
+            onPressed: () async {
+              // Navigate to filtering page and await filters
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Filterpage()),
+              );
+
+              if (result != null) {
+                setState(() async {
+
+  if (result != null) {
+    setState(() {
+      filters = result; // Update filters
+      _currentUserIndex = 0;
+      noMoreUsers = false;
+    });
+
+    // Refetch data with new filters
+    await _fetchData(appliedFilters: filters);
+  }
+                });
+              }
+            },
+
+
             ),
           ),
         ],
         centerTitle: true,
       ),
-      body: noMoreUsers==false? Stack(
+      body: _isLoading? 
+         const Center(
+          child: CircularProgressIndicator(),
+        )
+        :
+      
+       noMoreUsers==false? 
+      Stack(
         children: [
           CustomScrollView(
             controller: _scrollController,
@@ -277,7 +367,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        currentUser['name'].toString()!,
+                        '${_users[_currentUserIndex]['name'].toString()!} - ${_users[_currentUserIndex]['age'].toString()!}',
                         style: GoogleFonts.outfit(
                           fontSize: MediaQuery.of(context).size.width * 0.035,
                           fontWeight: FontWeight.bold,
@@ -292,7 +382,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                         ),
                       ),
                       Text(
-                        " - ${currentUser['detail']}",
+                        " - ${_users[_currentUserIndex]['detail']}",
                         style: GoogleFonts.outfit(
                           fontSize: 8,
                           fontWeight: FontWeight.normal,
@@ -311,7 +401,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                   background: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     child: Image.asset(
-                      currentUser['image']!,
+                      _users[_currentUserIndex]['image']!,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -330,7 +420,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                           styledText('Bio'),
                           const SizedBox(height: 2),
                           Text(
-                            currentUser['bio']!,
+                            _users[_currentUserIndex]['bio']!,
                             style: GoogleFonts.outfit(fontSize: 16),
                           ),
                           const SizedBox(height: 20),
@@ -340,7 +430,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                             spacing: 8.0,
                             runSpacing: 8.0,
                             children:
-                                (currentUser['interests'] as List<dynamic>)
+                                (_users[_currentUserIndex]['interests'] as List<dynamic>)
                                     .map((interest) {
                               return styledChip(interest.toString(), 20);
                             }).toList(),
@@ -353,7 +443,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                           Wrap(
                             spacing: 8.0,
                             runSpacing: 8.0,
-                            children: (currentUser['values'] as List<dynamic>)
+                            children: (_users[_currentUserIndex]['values'] as List<dynamic>)
                                 .map((interest) {
                               return styledChip(interest.toString(), 20);
                             }).toList(),
@@ -366,17 +456,17 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                           Wrap(
                             spacing: 8.0,
                             runSpacing: 8.0,
-                            children: (currentUser['languagesSpoken']
+                            children: (_users[_currentUserIndex]['languagesSpoken']
                                     as List<dynamic>)
                                 .map((interest) {
                               return styledChip(interest.toString(), 20);
                             }).toList(),
                           ),
                           const SizedBox(height: 10),
-                          currentUser['images'].length >
+                          _users[_currentUserIndex]['images'].length >
                                   0 // Check if the array has at least one image
                               ? Image.asset(
-                                  currentUser['images'][
+                                  _users[_currentUserIndex]['images'][
                                       0]!, // Only attempt to load the first image if the array size is > 0
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
@@ -393,7 +483,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                           Wrap(
                             spacing: 8.0,
                             runSpacing: 8.0,
-                            children: (currentUser['preferredStudyTimes']
+                            children: (_users[_currentUserIndex]['preferredStudyTimes']
                                     as List<dynamic>)
                                 .map((interest) {
                               return styledChip(interest.toString(), 10);
@@ -404,7 +494,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                           Wrap(
                             spacing: 8.0,
                             runSpacing: 8.0,
-                            children: (currentUser['preferredStudyMethods']
+                            children: (_users[_currentUserIndex]['preferredStudyMethods']
                                     as List<dynamic>)
                                 .map((interest) {
                               return styledChip(interest.toString(), 10);
@@ -416,7 +506,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                             spacing: 8.0,
                             runSpacing: 8.0,
                             children:
-                                (currentUser['studyGoals'] as List<dynamic>)
+                                (_users[_currentUserIndex]['studyGoals'] as List<dynamic>)
                                     .map((interest) {
                               return styledChip(interest.toString(), 10);
                             }).toList(),
@@ -426,7 +516,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                           Wrap(
                             spacing: 8.0,
                             runSpacing: 8.0,
-                            children: (currentUser['communicationMethods']
+                            children: (_users[_currentUserIndex]['communicationMethods']
                                     as List<dynamic>)
                                 .map((interest) {
                               return styledChip(interest.toString(), 10);
@@ -438,16 +528,16 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
                             spacing: 8.0,
                             runSpacing: 8.0,
                             children:
-                                (currentUser['interests'] as List<dynamic>)
+                                (_users[_currentUserIndex]['interests'] as List<dynamic>)
                                     .map((interest) {
                               return styledChip(interest.toString(), 20);
                             }).toList(),
                           ),
                           const SizedBox(height: 10),
-                          currentUser['images'].length >
+                          _users[_currentUserIndex]['images'].length >
                                   1 // Check if the array has at least one image
                               ? Image.asset(
-                                  currentUser['images'][
+                                  _users[_currentUserIndex]['images'][
                                       1]!, // Only attempt to load the first image if the array size is > 0
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
@@ -462,7 +552,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
 
                           const SizedBox(height: 20),
                           Text(
-                            'Algiers, Algeria\n~ 20km away',
+                            'Algiers, Algeria\n~ ${_users[_currentUserIndex]['distance']}km away',
                             style: GoogleFonts.outfit(
                               fontSize: 20,
                               fontWeight: FontWeight.w500,
@@ -526,7 +616,7 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
 
                   Future.delayed(const Duration(milliseconds: 0), () async {
                     var isMatch = onSwipeButtonPressed(
-                        '${widget.userID}', currentUser['userID'].toString()!);
+                        '${widget.userID}', _users[_currentUserIndex]['userID'].toString()!);
                     if (await isMatch) {
                       showMatchMessage(context);
                     }
@@ -619,4 +709,31 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
       ),
     );
   }
+}
+
+
+double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+  const double earthRadius = 6371; // Earth's radius in kilometers
+
+  // Convert latitude and longitude from degrees to radians
+  double lat1Rad = lat1 * pi / 180;
+  double lon1Rad = lon1 * pi / 180;
+  double lat2Rad = lat2 * pi / 180;
+  double lon2Rad = lon2 * pi / 180;
+
+  // Differences in coordinates
+  double deltaLat = lat2Rad - lat1Rad;
+  double deltaLon = lon2Rad - lon1Rad;
+
+  // Haversine formula
+  double a = sin(deltaLat / 2) * sin(deltaLat / 2) +
+             cos(lat1Rad) * cos(lat2Rad) *
+             sin(deltaLon / 2) * sin(deltaLon / 2);
+  double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+  // Distance in kilometers
+  double distance = earthRadius * c;
+
+  // Optionally, convert to meters if needed
+  return distance * 1000; // Returns distance in meters
 }
