@@ -1,16 +1,51 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stubudmvp/farial/db_helper.dart';
 import 'package:stubudmvp/imad/exploreBuddiesPage.dart';
 
 class beCool extends StatefulWidget {
-   final String userID;
-  const beCool ({super.key, required this.userID});
+  final String userID;
+  const beCool({super.key, required this.userID});
 
   @override
   State<beCool> createState() => _beCool();
 }
 
 class _beCool extends State<beCool> {
+  String username = '';
+  String email = '';
+  String fullName = '';
+  File? profilePic;
+
+  Future<void> saveUserProfileToLocalStorage() async {
+    // Store the user profile data in the local SQLite database
+    DocumentSnapshot userProfile = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.userID)
+        .get();
+    username = userProfile['username'] ?? 'Unknown';
+    email = userProfile['email'] ?? 'No Email';
+    fullName = userProfile['fullName'] ?? 'No Name';
+    String profilePicPath = userProfile['profilePicPath'] ?? '';
+    profilePic = profilePicPath.isNotEmpty ? File(profilePicPath) : null;
+    await UserProfileDatabaseHelper().insertOrUpdateUserProfile(
+      username: username,
+      email: email,
+      fullName: fullName,
+      profilePicPath: profilePic?.path ?? '',
+    );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    saveUserProfileToLocalStorage();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,8 +181,6 @@ class _beCool extends State<beCool> {
               ),
             ),
             const SizedBox(height: 15),
-
-           
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width * 0.05),
@@ -185,8 +218,6 @@ class _beCool extends State<beCool> {
               ),
             ),
             const SizedBox(height: 15),
-
-            
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width * 0.05),
@@ -224,8 +255,6 @@ class _beCool extends State<beCool> {
               ),
             ),
             const SizedBox(height: 15),
-
-            
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width * 0.05),
@@ -267,18 +296,16 @@ class _beCool extends State<beCool> {
               child: Container(
                 decoration: BoxDecoration(
                   color: const Color(0xFF7C90D6),
-                  borderRadius:
-                      BorderRadius.circular(40), 
+                  borderRadius: BorderRadius.circular(40),
                 ),
                 child: MaterialButton(
                   onPressed: () {
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
                         builder: (context) =>
-                            Explorebuddiespage(userID:widget.userID), 
+                            Explorebuddiespage(userID: widget.userID),
                       ),
-                      (route) =>
-                          false, 
+                      (route) => false,
                     );
                   },
                   height: 55,
@@ -288,8 +315,7 @@ class _beCool extends State<beCool> {
                   child: Text(
                     "Let's Go",
                     style: GoogleFonts.outfit(
-                        textStyle:
-                            const TextStyle(color: Colors.white)), 
+                        textStyle: const TextStyle(color: Colors.white)),
                   ),
                 ),
               ),

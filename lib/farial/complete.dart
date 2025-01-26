@@ -22,7 +22,7 @@ class _complete extends State<complete> {
   bool see1 = true;
   String? _selectedGender;
   String? error = "";
-
+  String fullName = "";
   final TextEditingController _dayController = TextEditingController();
   final TextEditingController _monthController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
@@ -120,6 +120,21 @@ class _complete extends State<complete> {
     _selectedGender = null;
     error = "";
     dateErr = "";
+    fetchName();
+  }
+
+  Future<void> fetchName() async {
+    DocumentSnapshot<Map<String, dynamic>> profileSnapshot =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(widget.userID)
+            .get();
+    final profileData = profileSnapshot.data();
+    if (profileData != null) {
+      setState(() {
+        fullName = profileData['fullName'] ?? '';
+      });
+    }
   }
 
   @override
@@ -163,22 +178,29 @@ class _complete extends State<complete> {
                     Text(
                       "Welcome In, ",
                       style: GoogleFonts.outfit(
-                          textStyle: const TextStyle(
-                              fontSize: 28, fontWeight: FontWeight.w500)),
+                        textStyle: const TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
-                    Text(
-                      "I",
-                      style: GoogleFonts.outfit(
-                          textStyle: const TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF7C90D6))),
-                    ),
-                    Text("mad",
+                    Flexible(
+                      child: Text(
+                        fullName,
                         style: GoogleFonts.outfit(
                           textStyle: const TextStyle(
-                              fontSize: 28, fontWeight: FontWeight.w500),
-                        ))
+                            fontSize: 28,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF7C90D6),
+                          ),
+                        ),
+                        textAlign: TextAlign.start,
+                        overflow: TextOverflow
+                            .ellipsis, 
+                        softWrap:
+                            true, 
+                      ),
+                    ),
                   ]),
               Container(height: 10),
               Text("Complete your profile",
@@ -482,7 +504,7 @@ class _complete extends State<complete> {
                                 if (_selectedGender != null) {
                                   if (validateDateInputs(
                                       day: day, month: month, year: year)) {
-                                      final doesExist = await FirebaseFirestore
+                                    final doesExist = await FirebaseFirestore
                                         .instance
                                         .collection('users')
                                         .where('username',
@@ -510,7 +532,7 @@ class _complete extends State<complete> {
                                               .doc(widget.userID);
 
                                       await userDoc.update(updatedProfile);
-
+                                    
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) =>
@@ -552,8 +574,6 @@ class _complete extends State<complete> {
           ),
         ));
   }
-
-  
 
   Widget togglePassword() {
     return IconButton(

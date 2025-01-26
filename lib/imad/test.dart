@@ -1,130 +1,249 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
-Future<void> _fetchData(dynamic widget) async {
-  try {
-    print('UserID: ${widget.userID}');
-
-    // Fetch the logged-in user's document to retrieve their list of friends
-    final loggedInUserDoc = await FirebaseFirestore.instance.collection('users').doc(widget.userID).get();
-    if (!loggedInUserDoc.exists) {
-      throw Exception("Logged-in user document not found");
-    }
-
-    // Retrieve the list of friend IDs from the logged-in user's document
-    List<String> friends = List<String>.from(loggedInUserDoc.data()?['friends'] ?? []);
-
-    // Fetch all users, excluding the logged-in user and their friends
-    final snapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .get();
-
-    final documents = snapshot.docs
-        .where((doc) => doc.id != widget.userID && !friends.contains(doc.id)) // Exclude logged-in user and friends
-        .toList();
-
-    _users = documents.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return {
-        'userID': doc.id,  // Add the userID here
-        'name': data['fullName'],
-        'bio': data['bio'],
-        'detail': 'Student at ${data['school']}',
-        'image': data['profilePic'] ?? 'default_image.jpg',
-        'interests': data['interests'] ?? [],
-        'academicStrengths': data['academicStrengths'] ?? [],
-        'languagesSpoken': data['languagesSpoken'] ?? [],
-        'communicationMethods': data['communicationMethods'] ?? [],
-        'preferredStudyMethods': data['preferredStudyMethods'] ?? [],
-        'preferredStudyTimes': data['preferredStudyTimes'] ?? [],
-        'studyGoals': data['studyGoals'] ?? [],
-        'values': data['values'] ?? [],
-        'images': data['images'] ?? [],
-        'imagesSize': (data['images'] ?? []).length,
-      };
-    }).toList()
-    ..sort((a, b) => a['name'].compareTo(b['name'])); // Sort by name
-
-  } catch (e) {
-    print('Error fetching data: $e');
-  } finally {
-    setState(() {
-      _isLoading = false;
+    await FirebaseFirestore.instance.collection('users').doc('B22OJ8zfhirsLHOfgYrK').set({
+      'active': 'true',
+      'gender': 'male',
+      'dateOfBirth': Timestamp.fromDate(DateTime(2004, 9, 27)),
+      'email': 'imad@gmail.com',
+      'field': 'Artificial Intelligence',
+      'fullName': 'Imad',
+      'level': 'third year 3rd(L3/1CP)',
+      'password': 'badribadri',
+      'username': 'imadedd',
+      'name': 'badri',
+      'bio': 'one look give them whiplash',
+      'school': 'ENSIA',
+      'image': {'images/billel/image.png'},
+      'interests': {'film making', 'coding', 'music', 'movies'},
+      'academicStrengths': {'mathematics', 'physics', 'computer science'},
+      'languagesSpoken': {'english', 'french', 'arabic', 'korean'},
+      'communicationMethods': {'coffee shops', 'univeristy cafe', 'co working spaces'},
+      'preferredStudyMethods': {'mock tests', 'quizzes', 'silent study'},
+      'preferredStudyTimes': {'morning', 'evening', 'night'},
+      'studyGoals': {'finding study buddies', 'collaborate on projects', 'networking'},
+      'values': {'hypocrisity', 'lying'},
+      'profilePic': 'images/billel/image.png',
+      'location': const GeoPoint(36.79403947790401, 2.905539787794699), // Example coordinates
     });
-  }
-}
+
+
+      Query query = FirebaseFirestore.instance.collection('users');
+   // Insert into Firestore
+    await FirebaseFirestore.instance.collection('users').doc('58555585858520').set({
+      'active': 'true',
+      'gender': 'male',
+      'dateOfBirth': Timestamp.fromDate(DateTime(2004, 5, 8)),
+      'email': 'badri@gmail.com',
+      'field': 'Artificial Intelligence',
+      'fullName': 'badri',
+      'level': 'first year 1sr(L1/1CP)',
+      'password': 'badribadri',
+      'username': 'menkilla',
+      'name': 'badri',
+      'bio': 'dont get too close, i am a bad friend ijbol',
+      'school': 'ENSIA',
+      'image': {'images/billel/image.png'},
+      'interests': {'coding', 'films', 'gaming', 'fashion'},
+      'academicStrengths': {'programming', 'mathematics', 'computer architecture'},
+      'languagesSpoken': {'english', 'french', 'arabic'},
+      'communicationMethods': {'coffee shops', 'univeristy library', 'dorms'},
+      'preferredStudyMethods': {'silent study', 'quizzes', 'mock tests'},
+      'preferredStudyTimes': {'morning', 'evening', 'night'},
+      'studyGoals': {'finding study buddies', 'collaborate on projects', 'networking'},
+      'values': {'hypocrisity', 'lying'},
+      'profilePic': 'images/billel/image.png',
+      'location': const GeoPoint(36.92315856611322, 7.756785720693928), // Example coordinates
+    });
 
 
 
-   // Add user data to the collection
-      /*
-      await users.doc('58555585858520').set({
-        'active' : 'true',
-        'dateOfBirth' : '2004-05-08',
-        'email' : 'badri@gmail.com',
-        'field' : 'Artificial Intelligence',
-        'fullName' : 'badri',
-        'level' : 'first year 1sr(L1/1CP)',
-        'password' : 'badribadri',
-        'username' : 'menkilla',
-          'name': 'badri',
-          'bio': 'dont get too close, i am a bad friend ijbol',
-          'school': 'ENSIA',
-          'image': {'', '', ''},
-          'interests': {'coding', 'films', 'gaming', 'fashion'},
-          'academicStrengths': {'programming', 'mathematics', 'computer architecture'},
-          'languagesSpoken': {'english', 'french', 'arabic'},
-          'communicationMethods': {'coffee shops', 'univeristy library', 'dorms'},
-          'preferredStudyMethods': {'silent study', 'quizzes', 'mock tests'},
-          'preferredStudyTimes': {'morning', 'evening', 'night'},
-          'studyGoals': {'finding study buddies', 'collaborate on projects', 'networking'},
-          'values': {'hypocrisity', 'lying'},
-          'profilePic': '',
-      });
+await FirebaseFirestore.instance.collection('users').doc('A15XY7zfhirsLMOfgYzJ').set({
+  'active': 'true',
+  'gender': 'female',
+  'dateOfBirth': Timestamp.fromDate(DateTime(2003, 7, 15)),
+  'email': 'amal@gmail.com',
+  'field': 'Computer Science',
+  'fullName': 'Amal Boudjemaa',
+  'level': 'third year 3rd(L3/1CP)',
+  'password': 'amal1234',
+  'username': 'amal_bj',
+  'name': 'amal',
+  'bio': 'Dream big, work hard, stay humble.',
+  'school': 'USTHB',
+  'image': {'images/billel/image.png'},
+  'interests': {'graphic design', 'coding', 'painting', 'reading'},
+  'academicStrengths': {'mathematics', 'algorithms', 'data structures'},
+  'languagesSpoken': {'arabic', 'french', 'english'},
+  'communicationMethods': {'libraries', 'co working spaces', 'university events'},
+  'preferredStudyMethods': {'group study', 'mind maps', 'flashcards'},
+  'preferredStudyTimes': {'afternoon', 'evening'},
+  'studyGoals': {'improve academic performance', 'explore new fields', 'develop leadership skills'},
+  'values': {'integrity', 'honesty'},
+  'profilePic': 'images/billel/image.png',
+  'location': const GeoPoint(36.752887, 3.042048), // Algiers coordinates
+});
+
+await FirebaseFirestore.instance.collection('users').doc('C45PX9zfhirsLMQfgYrR').set({
+  'active': 'true',
+  'gender': 'male',
+  'dateOfBirth': Timestamp.fromDate(DateTime(2002, 5, 10)),
+  'email': 'younes@gmail.com',
+  'field': 'Mechanical Engineering',
+  'fullName': 'Younes Benamara',
+  'level': 'fourth year (L4)',
+  'password': 'younes4567',
+  'username': 'younes_bmr',
+  'name': 'younes',
+  'bio': 'Engineer by passion, innovator by nature.',
+  'school': 'Polytechnic School of Algiers',
+  'image': {'images/billel/image.png'},
+  'interests': {'robotics', 'mechanics', 'sports', 'gaming'},
+  'academicStrengths': {'physics', 'mechanics', 'CAD design'},
+  'languagesSpoken': {'arabic', 'french', 'english'},
+  'communicationMethods': {'cafes', 'study groups', 'gym meetups'},
+  'preferredStudyMethods': {'practical experiments', 'case studies', 'problem-solving sessions'},
+  'preferredStudyTimes': {'morning', 'afternoon'},
+  'studyGoals': {'develop innovative solutions', 'gain hands-on experience', 'create impactful projects'},
+  'values': {'teamwork', 'dedication'},
+  'profilePic': 'images/billel/image.png',
+  'location': const GeoPoint(36.713061, 3.176035), // Example coordinates for Algiers
+});
 
 
-*/
 
-//!MUST UPDATE DONT LOOP.
+await FirebaseFirestore.instance.collection('users').doc('D39LK2zfhirsLPOfgYrS').set({
+  'active': 'true',
+  'gender': 'female',
+  'dateOfBirth': Timestamp.fromDate(DateTime(2001, 3, 12)),
+  'email': 'nadia@gmail.com',
+  'field': 'Biology',
+  'fullName': 'Nadia Ait Ahmed',
+  'level': 'Master’s Year 1',
+  'password': 'nadia2023',
+  'username': 'nadia_aa',
+  'name': 'nadia',
+  'bio': 'Exploring life through science.',
+  'school': 'University of Bejaia',
+  'image': {'images/billel/image.png'},
+  'interests': {'hiking', 'photography', 'ecology', 'music'},
+  'academicStrengths': {'genetics', 'cell biology', 'environmental science'},
+  'languagesSpoken': {'arabic', 'kabyle', 'french'},
+  'communicationMethods': {'nature walks', 'university cafes', 'group discussions'},
+  'preferredStudyMethods': {'reading', 'research projects', 'visual aids'},
+  'preferredStudyTimes': {'morning', 'afternoon'},
+  'studyGoals': {'research contributions', 'networking in the field', 'sustainable development'},
+  'values': {'respect', 'curiosity'},
+  'profilePic': 'images/billel/image.png',
+  'location': const GeoPoint(36.750889, 5.056733), // Bejaia coordinates
+});
+
+await FirebaseFirestore.instance.collection('users').doc('E88JK3zfhirsLMOfgYrT').set({
+  'active': 'true',
+  'gender': 'male',
+  'dateOfBirth': Timestamp.fromDate(DateTime(1999, 8, 25)),
+  'email': 'sami@gmail.com',
+  'field': 'Architecture',
+  'fullName': 'Sami Meziane',
+  'level': 'Final Year',
+  'password': 'archisami',
+  'username': 'sami_mz',
+  'name': 'sami',
+  'bio': 'Building dreams into reality.',
+  'school': 'University of Tlemcen',
+  'image': {'images/billel/image.png'},
+  'interests': {'sketching', 'designing', 'traveling', 'history'},
+  'academicStrengths': {'design principles', 'urban planning', 'construction methods'},
+  'languagesSpoken': {'arabic', 'french', 'english'},
+  'communicationMethods': {'workshops', 'design studios', 'cultural meetups'},
+  'preferredStudyMethods': {'drafting', 'model building', 'collaborative discussions'},
+  'preferredStudyTimes': {'evening', 'night'},
+  'studyGoals': {'perfect design aesthetics', 'sustainable architecture', 'collaborations'},
+  'values': {'creativity', 'innovation'},
+  'profilePic': 'images/billel/image.png',
+  'location': const GeoPoint(34.882764, -1.316934), // Tlemcen coordinates
+});
+
+await FirebaseFirestore.instance.collection('users').doc('F22VX5zfhirsLMNfgYrU').set({
+  'active': 'true',
+  'gender': 'female',
+  'dateOfBirth': Timestamp.fromDate(DateTime(2000, 11, 6)),
+  'email': 'ines@gmail.com',
+  'field': 'Physics',
+  'fullName': 'Ines Djouadi',
+  'level': 'Master’s Year 2',
+  'password': 'inesphys',
+  'username': 'ines_dj',
+  'name': 'ines',
+  'bio': 'Unraveling the mysteries of the universe.',
+  'school': 'University of Constantine',
+  'image': {'images/billel/image.png'},
+  'interests': {'astronomy', 'coding', 'books', 'chess'},
+  'academicStrengths': {'quantum mechanics', 'optics', 'thermodynamics'},
+  'languagesSpoken': {'arabic', 'french', 'english'},
+  'communicationMethods': {'seminars', 'study groups', 'observatories'},
+  'preferredStudyMethods': {'problem-solving', 'peer teaching', 'interactive apps'},
+  'preferredStudyTimes': {'morning', 'night'},
+  'studyGoals': {'publishing research', 'academic teaching', 'global collaborations'},
+  'values': {'precision', 'honesty'},
+  'profilePic': 'images/billel/image.png',
+  'location': const GeoPoint(36.356203, 6.614946), // Constantine coordinates
+});
+
+await FirebaseFirestore.instance.collection('users').doc('G44KZ8zfhirsLMNfgYrV').set({
+  'active': 'true',
+  'gender': 'male',
+  'dateOfBirth': Timestamp.fromDate(DateTime(1998, 1, 20)),
+  'email': 'adil@gmail.com',
+  'field': 'Law',
+  'fullName': 'Adil Boukhalfa',
+  'level': 'Final Year',
+  'password': 'adil1998',
+  'username': 'adil_bkf',
+  'name': 'adil',
+  'bio': 'Advocate for justice and equality.',
+  'school': 'University of Oran 2',
+  'image': {'images/billel/image.png'},
+  'interests': {'debates', 'reading', 'volunteering', 'soccer'},
+  'academicStrengths': {'constitutional law', 'civil law', 'legal writing'},
+  'languagesSpoken': {'arabic', 'french', 'english'},
+  'communicationMethods': {'legal workshops', 'debate clubs', 'seminars'},
+  'preferredStudyMethods': {'case studies', 'mock trials', 'reading'},
+  'preferredStudyTimes': {'afternoon', 'evening'},
+  'studyGoals': {'passing the bar', 'defending human rights', 'policy reforms'},
+  'values': {'justice', 'fairness'},
+  'profilePic': 'images/billel/image.png',
+  'location': const GeoPoint(35.696108, -0.633212), // Oran coordinates
+});
+
+await FirebaseFirestore.instance.collection('users').doc('H56LY9zfhirsLMNfgYrW').set({
+  'active': 'true',
+  'gender': 'female',
+  'dateOfBirth': Timestamp.fromDate(DateTime(2005, 12, 14)),
+  'email': 'sara@gmail.com',
+  'field': 'Medicine',
+  'fullName': 'Sara Boumediene',
+  'level': 'Second Year',
+  'password': 'medsara05',
+  'username': 'sara_bmd',
+  'name': 'sara',
+  'bio': 'Healing hands, caring hearts.',
+  'school': 'University of Algiers 1',
+  'image': {'images/billel/image.png'},
+  'interests': {'volunteering', 'reading', 'music', 'fitness'},
+  'academicStrengths': {'anatomy', 'biochemistry', 'pathology'},
+  'languagesSpoken': {'arabic', 'french', 'english'},
+  'communicationMethods': {'hospitals', 'study groups', 'community service'},
+  'preferredStudyMethods': {'group study', 'flashcards', 'practice tests'},
+  'preferredStudyTimes': {'morning', 'evening'},
+  'studyGoals': {'medical research', 'community health', 'specialization'},
+  'values': {'compassion', 'dedication'},
+  'profilePic': 'images/billel/image.png',
+  'location': const GeoPoint(36.73225, 3.08628), // Algiers coordinates
+});
 
 
 
-import 'package:flutter/material.dart';
+await FirebaseFirestore.instance.collection('InterestedIn').doc('1zfiy7ueOGflbgYXuRo3').set({
+  'InterestedStuID': 'H56LY9zfhirsLMNfgYrW',
+  'RecipientStuID': 'G44KZ8zfhirsLMNfgYrV',
+  'matchDate': Timestamp.fromDate(DateTime(1998, 1, 20)),
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  final bool condition = true; // Change this to see different content
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Conditional Rendering"),
-      ),
-      body: condition
-          ? Center(
-              child: Text(
-                "Condition is true!",
-                style: TextStyle(fontSize: 20),
-              ),
-            )
-          : Center(
-              child: Text(
-                "Condition is false!",
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
-    );
-  }
-}
+});

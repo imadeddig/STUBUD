@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stubudmvp/farial/beCool.dart';
-import '../database/UserImages.dart';
 
 class Shots extends StatefulWidget {
   final String userID;
@@ -273,7 +272,6 @@ class _ShotsState extends State<Shots> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                // Column for smaller images
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Column(
@@ -367,7 +365,7 @@ class _ShotsState extends State<Shots> {
                     child: IconButton(
                       icon:
                           const Icon(Icons.arrow_forward, color: Colors.black),
-                      onPressed: () {
+                      onPressed: () async {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => beCool(userID:widget.userID)));
                       },

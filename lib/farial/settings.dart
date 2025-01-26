@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:stubudmvp/aiteur/screens/edit_account_info.dart';
 import 'package:stubudmvp/chatbud/chatbud1.dart';
 import 'package:stubudmvp/database/StudentProfile.dart';
 import 'package:stubudmvp/farial/blocked.dart';
+import 'package:stubudmvp/farial/db_helper.dart';
 import 'package:stubudmvp/farial/profileInfo.dart';
 import 'package:stubudmvp/imad/exploreBuddiesPage.dart';
 import 'package:stubudmvp/farial/delete.dart';
@@ -27,14 +31,116 @@ class _SettingsState extends State<Settings> {
   String username = '';
   String email = '';
   String fullName = '';
+  File? pic;
+  int complete = 0;
+  String bio = "";
+
+  late List interest;
+
+  late List values;
+
+  late String location;
+
+  late List languages;
+
+  late List goals;
+
+  late String speciality;
+
+  late String field;
+
+  late String year;
 
   @override
   void initState() {
     super.initState();
+    // _loadUserProfile();
     _fetchUserProfile();
-
-    firestore = FirebaseFirestore.instance;
+      firestore = FirebaseFirestore.instance;
     issues = firestore.collection('issues');
+  }
+
+  Future<void> checkComplete() async {
+    int value = 0;
+
+    if (username != '') {
+      value += 10;
+    }
+    if (pic != null) {
+      value += 10;
+    }
+    if (interest != '') {
+      value += 10;
+    }
+    if (values.isNotEmpty) {
+      value += 10;
+    }
+    if (languages.isNotEmpty) {
+      value += 10;
+    }
+    if (goals.isNotEmpty) {
+      value += 10;
+    }
+    if (location != '') {
+      value += 10;
+    }
+    if (year != '') {
+      value += 10;
+    }
+    if (field != '') {
+      value += 10;
+    }
+    if (speciality != '') {
+      value += 10;
+    }
+
+    print("User profile completeness value: $value");
+
+    try {
+      DocumentReference userRef =
+          FirebaseFirestore.instance.collection('users').doc(widget.userID);
+      await userRef.update({'complete': value});
+
+      print("Firestore complete field updated");
+
+      setState(() {
+        complete = value;
+      });
+    } catch (error) {
+      print("Error updating complete field: $error");
+    }
+  }
+
+  Future<void> _loadUserProfile() async {
+    final profileData = await UserProfileDatabaseHelper().getUserProfile();
+
+    setState(() {
+      username = profileData['username'] ?? '';
+      fullName = profileData['fullName'] ?? '';
+      email = profileData['email'] ?? '';
+      pic = profileData['profilePicPath']?.isNotEmpty ?? false
+          ? File(profileData['profilePicPath']!)
+          : null;
+      interest = profileData['interests'] != null
+          ? List<String>.from(profileData['interests'] as Iterable)
+          : [];
+      values = profileData['values'] != null
+          ? List<String>.from(profileData['values'] as Iterable)
+          : [];
+
+      languages = profileData['spokenLanguages'] != null
+          ? List<String>.from(profileData['spokenLanguages'] as Iterable)
+          : [];
+      goals = profileData['goalsAndPurposes'] != null
+          ? List<String>.from(profileData['goalsAndPurposes'] as Iterable)
+          : [];
+      location = profileData['location'] ?? '';
+      field = profileData['field'] ?? '';
+      speciality = profileData['speciality'] ?? '';
+      year = profileData['level'] ?? '';
+    });
+
+    _fetchUserProfile();
   }
 
   Future<void> _fetchUserProfile() async {
@@ -49,11 +155,33 @@ class _SettingsState extends State<Settings> {
         final profileData = profileSnapshot.data();
         if (profileData != null) {
           setState(() {
-            username = profileData['username'] ?? 'unknown_user';
-            email = profileData['email'];
-            fullName = profileData['fullName'];
+            username = profileData['username'] ?? '';
+            fullName = profileData['fullName'] ?? '';
+            email = profileData['email'] ?? '';
+            pic = profileData['profilePic']?.isNotEmpty ?? false
+                ? File(profileData['profilePic']!)
+                : null;
+            interest = profileData['interests'] != null
+                ? List<String>.from(profileData['interests'] as Iterable)
+                : [];
+            values = profileData['values'] != null
+                ? List<String>.from(profileData['values'] as Iterable)
+                : [];
+
+            languages = profileData['spokenLanguages'] != null
+                ? List<String>.from(profileData['spokenLanguages'] as Iterable)
+                : [];
+            goals = profileData['goalsAndPurposes'] != null
+                ? List<String>.from(profileData['goalsAndPurposes'] as Iterable)
+                : [];
+            location = profileData['location'] ?? '';
+            field = profileData['field'] ?? '';
+            speciality = profileData['speciality'] ?? '';
+            year = profileData['level'] ?? '';
           });
         }
+        checkComplete();
+        print(pic);
       } else {
         print("User profile does not exist in Firestore.");
       }
@@ -86,6 +214,203 @@ class _SettingsState extends State<Settings> {
     }
   }
 
+  Future<void> saveImageToDatabase(String userID, String imagePath) async {
+    try {
+      DocumentReference userRef =
+          FirebaseFirestore.instance.collection('users').doc(userID);
+      await userRef.update({
+        'profilePic': imagePath,
+      });
+      print("Image saved successfully for userID: $userID");
+    } catch (e) {
+      print("Error saving image: $e");
+    }
+    _fetchUserProfile();
+  }
+
+  void uploadImage(ImageSource source, String userID) async {
+    final ImagePicker imagePicker = ImagePicker();
+    final pickedImage = await imagePicker.pickImage(source: source);
+
+    if (pickedImage != null) {
+      File newImage = File(pickedImage.path);
+
+      await saveImageToDatabase(userID, pickedImage.path);
+
+      setState(() {
+        pic = newImage;
+      });
+
+      print("Image uploaded and UI updated.");
+    } else {
+      print('No image selected.');
+    }
+  }
+
+  void Delete(String userID) async {
+    try {
+      DocumentReference userRef =
+          FirebaseFirestore.instance.collection('users').doc(userID);
+
+      await userRef.update({
+        'profilePic': FieldValue.delete(),
+      });
+
+      print("Image removed successfully for userID: $userID");
+    } catch (e) {
+      print("Error removing image: $e");
+    }
+    try {
+      DocumentReference userRef =
+          FirebaseFirestore.instance.collection('users').doc(widget.userID);
+
+      DocumentSnapshot userDoc = await userRef.get();
+
+      int currentValue = userDoc['complete'] ?? 0;
+      int updatedValue = currentValue - 10;
+
+      if (updatedValue >= 0) {
+        await userRef.update({'complete': updatedValue});
+        print("Decremented 'complete' field by 10.");
+      } else {
+        print("Cannot decrement. Value would become negative.");
+      }
+    } catch (e) {
+      print("Error decrementing 'complete': $e");
+    }
+    _fetchUserProfile();
+  }
+
+  void _showImageDialog(BuildContext context, userID) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          contentPadding: EdgeInsets.zero,
+          content: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            width: MediaQuery.of(context).size.width * 0.7,
+            height: MediaQuery.of(context).size.height * 0.55,
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+                Center(
+                  child: Text("Select a new profile picture",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(
+                          textStyle: const TextStyle(
+                        color: Color.fromRGBO(0, 0, 0, 0.6),
+                        fontSize: 15,
+                      ))),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    uploadImage(ImageSource.camera, userID);
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF7C8FD6),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 7,
+                    ),
+                  ),
+                  child: Text(
+                    "Take a photo",
+                    style: GoogleFonts.outfit(
+                      textStyle: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    uploadImage(ImageSource.gallery, userID);
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF7C8FD6),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 7,
+                    ),
+                  ),
+                  child: Text(
+                    "Choose from gallery",
+                    style: GoogleFonts.outfit(
+                      textStyle: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Delete(userID);
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 7,
+                    ),
+                  ),
+                  child: Text(
+                    "Delete Profile Picture",
+                    style: GoogleFonts.outfit(
+                      textStyle: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                  ),
+                  child: Text(
+                    "Cancel",
+                    style: GoogleFonts.outfit(
+                      textStyle: const TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,59 +419,77 @@ class _SettingsState extends State<Settings> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 40),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  width: 130,
-                  height: 130,
-                  child: CustomPaint(
-                    painter: PartialCirclePainter(),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(150),
-                      child: Image.asset("images/profile .png"),
+            GestureDetector(
+              onTap: () {
+                _showImageDialog(context, widget.userID);
+              },
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 130,
+                    height: 130,
+                    child: CustomPaint(
+                      painter: PartialCirclePainter(),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(150),
+                        child: pic != null
+                            ? Image.file(
+                                pic!,
+                                fit: BoxFit.cover,
+                                width: 120,
+                                height: 110,
+                              )
+                            : Image.asset(
+                                "images/téléchargement.jpg",
+                                fit: BoxFit.cover,
+                                width: 120,
+                                height: 110,
+                              ),
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Container(
-                    width: 35,
-                    height: 35,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: const Icon(
-                      Icons.edit,
-                      color: Color(0xFF7C90D6),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Container(
+                      width: 35,
+                      height: 35,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Icon(
+                        Icons.edit,
+                        size: 40,
+                        color: Color(0xFF7C90D6),
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  child: Container(
-                    width: 100,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: const Color(0xFF7C90D6),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "50% complete",
-                        style: GoogleFonts.outfit(
-                          textStyle: const TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                      width: 100,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: const Color(0xFF7C90D6),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "$complete % complete",
+                          style: GoogleFonts.outfit(
+                            textStyle: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Text(
               fullName,
@@ -329,7 +672,7 @@ class PartialCirclePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..color = const Color(0xFF7C90D6)
-      ..strokeWidth = 5.0
+      ..strokeWidth = 12
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 

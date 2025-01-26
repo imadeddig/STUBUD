@@ -255,6 +255,7 @@ class _signIn extends State<signIn> {
                                       'bio':"",
                                       'school':"",
                                       'profilePic':"",
+                                      "complete":0,
                                     });
 
                                     String userId = docRef.id;

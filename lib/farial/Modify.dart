@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stubudmvp/interest5.dart';
 
-class Interest4 extends StatefulWidget {
+class Modify extends StatefulWidget {
   final String userID;
 
-  const Interest4({super.key, required this.userID});
+  const Modify({super.key, required this.userID});
 
   @override
-  State<Interest4> createState() => _Interest4State();
+  State<Modify> createState() => _ModifyState();
 }
 
-class _Interest4State extends State<Interest4> {
+class _ModifyState extends State<Modify> {
   List<String> studyTimes = [];
   List<String> methods = [];
   List<String> goals = [];
@@ -79,11 +79,10 @@ class _Interest4State extends State<Interest4> {
             child: TextButton(
               onPressed: () async {
              
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => Interest5(userID: widget.userID)));
+                Navigator.of(context).pop();
               },
               child: Text(
-                "Skip",
+                "Done",
                 style: GoogleFonts.outfit(
                   color: Colors.black,
                   fontWeight: FontWeight.w800,
@@ -100,35 +99,7 @@ class _Interest4State extends State<Interest4> {
               padding: EdgeInsets.only(top: verticalPadding),
               child: Column(
                 children: [
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: (screenWidth * 0.2)),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: LinearProgressIndicator(
-                              value: progress,
-                              valueColor: const AlwaysStoppedAnimation(
-                                  Color(0XFF7C90D6)),
-                              minHeight: 9,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          "4/6",
-                          style: GoogleFonts.outfit(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 13,
-                            color: Colors.black,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
+                 
                   SizedBox(
                     height: (screenHeight * 0.035),
                   ),
@@ -730,27 +701,7 @@ class _Interest4State extends State<Interest4> {
                 ),
               ),
             ),
-            Positioned(
-              bottom: screenHeight * 0.041,
-              right: screenWidth * 0.06,
-              child: InkWell(
-                onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => Interest5(userID: widget.userID)));
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(
-                    color: const Color(0XFF5A6EA5),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: const Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
+         
           ],
         ),
       ),

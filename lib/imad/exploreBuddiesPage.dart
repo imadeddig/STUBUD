@@ -34,11 +34,14 @@ class _ExplorebuddiespageState extends State<Explorebuddiespage> {
   }
 
 Future<void> _fetchData({Map<String, dynamic>? appliedFilters}) async  {
+print(appliedFilters);
       setState(() {
     _isLoading = true; // Show loading indicator while fetching data
   });
   int minAge=-1;
   int maxAge=-1;
+
+  double distanceUser=-1;
 
     try {
       final loggedInUserDoc = await FirebaseFirestore.instance.collection('users').doc(widget.userID).get();
@@ -54,17 +57,68 @@ final currentUserLocation = loggedInUserDoc.data()?['location'];
 
 
   Query query = FirebaseFirestore.instance.collection('users');
+   // Insert into Firestore
+  
+
+  
 
      if (appliedFilters != null) {
       if (appliedFilters.containsKey('gender') &&
           appliedFilters['gender'].isNotEmpty) {
         query = query.where('gender', isEqualTo: appliedFilters['gender']);
       }
+
+      if (appliedFilters.containsKey('selectedStudyMethods') &&
+    appliedFilters['selectedStudyMethods'].isNotEmpty) {
+  query = query.where('preferredStudyMethods', arrayContainsAny: appliedFilters['selectedStudyMethods']);
+}
+
+
+      if (appliedFilters.containsKey('selectedStudyTimes') &&
+    appliedFilters['selectedStudyTimes'].isNotEmpty) {
+  query = query.where('preferredStudyTimes', arrayContainsAny: appliedFilters['selectedStudyTimes']);
+}
+
+
+      if (appliedFilters.containsKey('selectedGoals') &&
+    appliedFilters['selectedGoals'].isNotEmpty) {
+  query = query.where('studyGoals', arrayContainsAny: appliedFilters['selectedGoals']);
+}
+
+      if (appliedFilters.containsKey('selectedCommunicationMethods') &&
+    appliedFilters['selectedCommunicationMethods'].isNotEmpty) {
+  query = query.where('communicationMethods', arrayContainsAny: appliedFilters['selectedCommunicationMethods']);
+}
+/*
+     if (appliedFilters.containsKey('selectedAcademicStrenghts') &&
+    appliedFilters['selectedAcademicStrenghts'].isNotEmpty) {
+  query = query.where('academicStrengths', arrayContainsAny: appliedFilters['selectedAcademicStrenghts']);
+}
+*/
+      if (appliedFilters.containsKey('languages') &&
+          appliedFilters['languages'].isNotEmpty) {
+              query = query.where('languagesSpoken', arrayContainsAny: appliedFilters['languages']);
+      }
+
+            if (appliedFilters.containsKey('interests') &&
+          appliedFilters['interests'].isNotEmpty) {
+              query = query.where('interests', arrayContainsAny: appliedFilters['interests']);
+      }
+
+
+
   if (appliedFilters.containsKey('ageRange')) {
     final RangeValues ageRange = appliedFilters['ageRange']; 
     minAge = ageRange.start.toInt();
     maxAge = ageRange.end.toInt();
   }
+
+      if (appliedFilters.containsKey('distance')) {
+        distanceUser = appliedFilters['distance'];
+        print(distanceUser);
+      }
+
+
     }
 
     final snapshot = await query.get();
@@ -97,14 +151,6 @@ final currentUserLocation = loggedInUserDoc.data()?['location'];
       if (currentUserLocation != null && data['location'] != null) {
         final currentUserGeoPoint = currentUserLocation as GeoPoint;
         final otherUserGeoPoint = data['location'] as GeoPoint;
-       print('555555555555555555555555555555555555555555555555555555555555');
-        print(otherUserGeoPoint);
-        print(otherUserGeoPoint.latitude,);
-        print(otherUserGeoPoint.longitude,);
-
-
-                print(currentUserGeoPoint.latitude,);
-        print(currentUserGeoPoint.longitude,);
 
 
         // Calculate the distance between the two locations in meters
@@ -145,12 +191,21 @@ final currentUserLocation = loggedInUserDoc.data()?['location'];
         _isLoading = false;
       });
     }
+    print("**************************************************************\n********************************************");
+    print(_users);
 
 
     if(minAge>0 && maxAge>0){
 _users = _users.where((user) {
   return user['age'] >= minAge && user['age'] <= maxAge;
 }).toList();
+    }
+
+    if(distanceUser>0){
+      _users = _users.where((user) {
+  return user['distance'] < distanceUser;
+}).toList();
+
     }
 
         print('after getting data from database, users list length is ${ _users.length}');
@@ -361,12 +416,14 @@ _users = _users.where((user) {
                   titlePadding: EdgeInsets.only(
                     left: 20,
                     top: 20,
-                    bottom: bottomBarHeight * 3.2,
+                    bottom: bottomBarHeight * 3.4,
                   ),
-                  title: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  title: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+                        
                         '${_users[_currentUserIndex]['name'].toString()!} - ${_users[_currentUserIndex]['age'].toString()!}',
                         style: GoogleFonts.outfit(
                           fontSize: MediaQuery.of(context).size.width * 0.035,
@@ -381,10 +438,28 @@ _users = _users.where((user) {
                           ],
                         ),
                       ),
+                      SizedBox(height: 2,),
                       Text(
-                        " - ${_users[_currentUserIndex]['detail']}",
+                        " ${_users[_currentUserIndex]['detail']}",
                         style: GoogleFonts.outfit(
-                          fontSize: 8,
+                          fontSize: 10,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withOpacity(0.9),
+                              offset: const Offset(1, 1),
+                              blurRadius: 50,
+                            ),
+                          ],
+                        ),
+                      ),
+  SizedBox(height: 2,),
+                      
+                          Text(
+                        "thid year",
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
                           fontWeight: FontWeight.normal,
                           color: Colors.white,
                           shadows: [
@@ -585,7 +660,9 @@ _users = _users.where((user) {
                 ],
               ),
               child: IconButton(
-                onPressed: () {
+                onPressed: () async {
+                            await FirebaseFirestore.instance.collection('users').doc(widget.userID).update({
+        'slides': FieldValue.arrayUnion([_users[_currentUserIndex]['userID'].toString()])});
                   _showNextUser();
                 },
                 icon: const Icon(Icons.close, size: 30),

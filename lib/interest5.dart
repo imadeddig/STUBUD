@@ -1,19 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:geolocator/geolocator.dart'; // For current location
 import 'package:stubudmvp/farial/shots.dart';
-import 'package:stubudmvp/database/StudentProfile.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:stubudmvp/selectLocation.dart';
 
 class Interest5 extends StatefulWidget {
   final String userID;
 
-  const Interest5({super.key, required this.userID});
+  const Interest5({Key? key, required this.userID}) : super(key: key);
 
   @override
   State<Interest5> createState() => _Interest5State();
 }
 
 class _Interest5State extends State<Interest5> {
+  LatLng _selectedLocation = const LatLng(37.7749, -122.4194);
   TextEditingController locationController = TextEditingController();
 
   @override
@@ -31,15 +34,19 @@ class _Interest5State extends State<Interest5> {
           Padding(
             padding: const EdgeInsets.only(right: 17),
             child: TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => Shots(userID: widget.userID)));
-                },
-                child: Text(
-                  "Skip",
-                  style: GoogleFonts.outfit(
-                      color: Colors.black, fontWeight: FontWeight.w800),
-                )),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => Shots(userID: widget.userID),
+                  ),
+                );
+              },
+              child: Text(
+                "Skip",
+                style: GoogleFonts.outfit(
+                    color: Colors.black, fontWeight: FontWeight.w800),
+              ),
+            ),
           )
         ],
       ),
@@ -78,9 +85,7 @@ class _Interest5State extends State<Interest5> {
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: (screenHeight * 0.035),
-                ),
+                SizedBox(height: (screenHeight * 0.035)),
                 Center(
                   child: Text(
                     "Set Your Location",
@@ -91,9 +96,7 @@ class _Interest5State extends State<Interest5> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: (screenHeight * 0.0012),
-                ),
+                SizedBox(height: (screenHeight * 0.0012)),
                 Center(
                   child: Text(
                     "Find out who’s close by!",
@@ -104,9 +107,7 @@ class _Interest5State extends State<Interest5> {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: (screenHeight * 0.045),
-                ),
+                SizedBox(height: (screenHeight * 0.045)),
                 Container(
                   padding:
                       EdgeInsets.symmetric(horizontal: (screenWidth * 0.1)),
@@ -133,7 +134,7 @@ class _Interest5State extends State<Interest5> {
                                 width: 2,
                               ),
                             ),
-                            hintText: "your location",
+                            hintText: "Your location",
                             hintStyle: GoogleFonts.outfit(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
@@ -152,48 +153,57 @@ class _Interest5State extends State<Interest5> {
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: (screenHeight * 0.03),
-                      ),
+                      SizedBox(height: (screenHeight * 0.03)),
                       InkWell(
-                        onTap: () {},
+                        onTap: () async {
+                          Position position = await _getCurrentLocation();
+                          setState(() {
+                            locationController.text =
+                                "${position.latitude}, ${position.longitude}";
+                          });
+                        },
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Icon(
                               Icons.location_on_outlined,
                               color: Color(0XFF1D1B20),
                               size: 21,
                             ),
-                            const SizedBox(
-                              width: 3,
-                            ),
+                            const SizedBox(width: 3),
                             Text(
-                              "your current location",
+                              "Use current location",
                               style: GoogleFonts.outfit(
                                   fontSize: 12, fontWeight: FontWeight.w600),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: (screenHeight * 0.0095),
-                      ),
+                      SizedBox(height: (screenHeight * 0.0095)),
                       InkWell(
-                        onTap: () {},
+                        onTap: () async {
+                          LatLng? selectedLocation = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MapPicker()),
+                          );
+
+                          if (selectedLocation != null) {
+                            setState(() {
+                              locationController.text =
+                                  "${selectedLocation.latitude}, ${selectedLocation.longitude}";
+                            });
+                          }
+                        },
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Icon(
                               Icons.map_outlined,
                               color: Color(0XFF1D1B20),
                               size: 21,
                             ),
-                            const SizedBox(
-                              width: 3,
-                            ),
+                            const SizedBox(width: 3),
                             Text(
-                              "select location on map",
+                              "Select location on map",
                               style: GoogleFonts.outfit(
                                   fontSize: 12, fontWeight: FontWeight.w600),
                             ),
@@ -220,9 +230,13 @@ class _Interest5State extends State<Interest5> {
                     .collection('users')
                     .doc(widget.userID)
                     .update(updatedProfile);
-                    
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => Shots(userID: widget.userID)));
+
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => Shots(userID: widget.userID),
+                  ),
+                );
               },
               child: Container(
                 padding: const EdgeInsets.all(15),
@@ -239,6 +253,18 @@ class _Interest5State extends State<Interest5> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<Position> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      throw Exception("Location services are disabled.");
+    }
+
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
     );
   }
 }

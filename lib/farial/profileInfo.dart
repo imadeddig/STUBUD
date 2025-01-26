@@ -3,6 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:stubudmvp/farial/Modify.dart';
+import 'package:stubudmvp/interest1.dart';
+import 'package:stubudmvp/interest2.dart';
+import 'package:stubudmvp/interest3.dart';
+import 'package:stubudmvp/interest4.dart';
 
 class Profileinfo extends StatefulWidget {
   final String userID;
@@ -65,43 +70,15 @@ class _ProfileinfoState extends State<Profileinfo> {
     );
   }
 
-  final List<String> dayTimes = ['Morning', 'Afternoon', 'Evening'];
-  final List<String> interests = [
-    'coding',
-    'sport',
-    'film Making ',
-    'medecine',
-    'music ',
-    'book club',
-    'add more'
-  ];
-  final List<String> values = [
-    'integrity',
-    'innovation',
-    'honesty ',
-  ];
-  final List<String> languages = [
-    'arabic',
-    'english',
-    'french ',
-    'spanich',
-    'turkish'
-  ];
-  final List<String> _labels3C = [
-    'Study group sessions',
-    'Networking',
-    'Finding study buddies'
-  ];
-  final List<String> _labels3D = ['Library', 'Coffee shop', 'Online virtual'];
-
-  final Set<String> __selectedLabels3 = {
-    'Morning',
-    'Group discussion',
-    'Timed Quizzes',
-    'Study group sessions',
-    'Networking',
-    'add more'
-  };
+  List<String> interest = [];
+  List<String> values = [];
+  List<String> languages = [];
+  List<String> studyTimes = [];
+  List<String> studyMethods = [];
+  List<String> goals = [];
+  List<String> skills = [];
+  List<String> strength = [];
+  List<String> communication = [];
 
   String? university = "";
   String? field = "";
@@ -294,11 +271,60 @@ class _ProfileinfoState extends State<Profileinfo> {
     });
   }
 
+ Future<void> _fetchUserInterests() async {
+  try {
+    DocumentSnapshot<Map<String, dynamic>> profileSnapshot =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(widget.userID)
+            .get();
+    
+    final profileData = profileSnapshot.data();
+
+    if (profileData != null) {
+      setState(() {
+        interest = profileData['interests'] != null
+            ? List<String>.from(profileData['interests'] as Iterable)
+            : ["nothing"];
+        values = profileData['values'] != null
+            ? List<String>.from(profileData['values'] as Iterable)
+            : ["nothing"];
+        languages = profileData['languagesSpoken'] != null
+            ? List<String>.from(profileData['languagesSpoken'] as Iterable)
+            : ["nothing"];
+        goals = profileData['goalsAndPurposes'] != null
+            ? List<String>.from(profileData['goalsAndPurposes'] as Iterable)
+            : ["nothing"];
+        studyTimes = profileData['studyTimes'] != null
+            ? List<String>.from(profileData['studyTimes'] as Iterable)
+            : ["nothing"];
+        studyMethods = profileData['studyMethods'] != null
+            ? List<String>.from(profileData['studyMethods'] as Iterable)
+            : ["nothing"];
+        skills = profileData['skills'] != null
+            ? List<String>.from(profileData['skills'] as Iterable)
+            : ["nothing"]; 
+        strength = profileData['strength'] != null
+            ? List<String>.from(profileData['strength'] as Iterable)
+            : ["nothing"];
+        communication = profileData['communicationMethods'] != null
+            ? List<String>.from(profileData['CommunicationMethods'] as Iterable)
+            : ["nothing"];
+      });
+    } else {
+      print("No profile data found.");
+    }
+  } catch (error) {
+    print("Error fetching user interests: $error");
+  }
+}
+
   @override
   void initState() {
     super.initState();
     fetchFirebaseImages();
     fetchInfo();
+    _fetchUserInterests();
   }
 
   @override
@@ -644,37 +670,18 @@ class _ProfileinfoState extends State<Profileinfo> {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: interests.map((label) {
-                  final bool isSelected3A = __selectedLabels3.contains(label);
+                children: interest.map((label) {
                   return Row(
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (label == 'add more') {
-                              Navigator.of(context).pushNamed(
-                                  "more"); // Navigate to "more" screen
-                            } else {
-                              // Toggle selection for the label
-                              if (isSelected3A) {
-                                __selectedLabels3.remove(
-                                    label); // Remove label if already selected
-                              } else {
-                                __selectedLabels3
-                                    .add(label); // Add label if not selected
-                              }
-                            }
-                          });
-                        },
+                        onTap: () {},
                         child: Container(
                           padding: EdgeInsets.symmetric(
                               horizontal: (screenWidth * 0.05)),
                           height: 33,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: isSelected3A
-                                ? const Color(0XFF7C90D6)
-                                : Colors.white,
+                            color: Colors.white,
                             border: Border.all(
                               width: 1,
                               color: const Color(0XFF7C90D6),
@@ -687,14 +694,14 @@ class _ProfileinfoState extends State<Profileinfo> {
                               style: GoogleFonts.outfit(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color:
-                                    isSelected3A ? Colors.white : Colors.black,
+                                color: Colors.black,
                               ),
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
                       ),
+                     
                       SizedBox(width: screenWidth * 0.02),
                     ],
                   );
@@ -733,28 +740,17 @@ class _ProfileinfoState extends State<Profileinfo> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: values.map((label) {
-                  final bool isSelected3B = __selectedLabels3.contains(label);
                   return Row(
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (isSelected3B) {
-                              __selectedLabels3.remove(label);
-                            } else {
-                              __selectedLabels3.add(label);
-                            }
-                          });
-                        },
+                        onTap: () {},
                         child: Container(
                           padding: EdgeInsets.symmetric(
                               horizontal: (screenWidth * 0.05)),
                           height: 33,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: isSelected3B
-                                ? const Color(0XFF7C90D6)
-                                : Colors.white,
+                            color: Colors.white,
                             border: Border.all(
                               width: 1,
                               color: const Color(0XFF7C90D6),
@@ -767,14 +763,14 @@ class _ProfileinfoState extends State<Profileinfo> {
                               style: GoogleFonts.outfit(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color:
-                                    isSelected3B ? Colors.white : Colors.black,
+                                color: Colors.black,
                               ),
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
                       ),
+                     
                       SizedBox(width: screenWidth * 0.02),
                     ],
                   );
@@ -795,7 +791,7 @@ class _ProfileinfoState extends State<Profileinfo> {
                   color: Colors.transparent,
                 ),
                 Text(
-                  "Spoken Languages?",
+                  "Spoken Languages",
                   style: GoogleFonts.outfit(
                     fontSize: 13,
                     fontWeight: FontWeight.w400,
@@ -813,28 +809,17 @@ class _ProfileinfoState extends State<Profileinfo> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: languages.map((label) {
-                  final bool isSelected3C = __selectedLabels3.contains(label);
                   return Row(
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (isSelected3C) {
-                              __selectedLabels3.remove(label);
-                            } else {
-                              __selectedLabels3.add(label);
-                            }
-                          });
-                        },
+                        onTap: () {},
                         child: Container(
                           padding: EdgeInsets.symmetric(
                               horizontal: (screenWidth * 0.05)),
                           height: 33,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: isSelected3C
-                                ? const Color(0XFF7C90D6)
-                                : Colors.white,
+                            color: Colors.white,
                             border: Border.all(
                               width: 1,
                               color: const Color(0XFF7C90D6),
@@ -847,8 +832,7 @@ class _ProfileinfoState extends State<Profileinfo> {
                               style: GoogleFonts.outfit(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color:
-                                    isSelected3C ? Colors.white : Colors.black,
+                                color: Colors.black,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -899,29 +883,18 @@ class _ProfileinfoState extends State<Profileinfo> {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: dayTimes.map((label) {
-                  final bool isSelected3D = __selectedLabels3.contains(label);
+                children: studyTimes.map((label) {
                   return Row(
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (isSelected3D) {
-                              __selectedLabels3.remove(label);
-                            } else {
-                              __selectedLabels3.add(label);
-                            }
-                          });
-                        },
+                        onTap: () {},
                         child: Container(
                           padding: EdgeInsets.symmetric(
                               horizontal: (screenWidth * 0.05)),
                           height: 33,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: isSelected3D
-                                ? const Color(0XFF7C90D6)
-                                : Colors.white,
+                            color: Colors.white,
                             border: Border.all(
                               width: 1,
                               color: const Color(0XFF7C90D6),
@@ -934,14 +907,14 @@ class _ProfileinfoState extends State<Profileinfo> {
                               style: GoogleFonts.outfit(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color:
-                                    isSelected3D ? Colors.white : Colors.black,
+                                color: Colors.black,
                               ),
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
                       ),
+                    
                       SizedBox(width: screenWidth * 0.02),
                     ],
                   );
@@ -976,29 +949,18 @@ class _ProfileinfoState extends State<Profileinfo> {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: dayTimes.map((label) {
-                  final bool isSelected3D = __selectedLabels3.contains(label);
+                children: goals.map((label) {
                   return Row(
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (isSelected3D) {
-                              __selectedLabels3.remove(label);
-                            } else {
-                              __selectedLabels3.add(label);
-                            }
-                          });
-                        },
+                        onTap: () {},
                         child: Container(
                           padding: EdgeInsets.symmetric(
                               horizontal: (screenWidth * 0.05)),
                           height: 33,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: isSelected3D
-                                ? const Color(0XFF7C90D6)
-                                : Colors.white,
+                            color: Colors.white,
                             border: Border.all(
                               width: 1,
                               color: const Color(0XFF7C90D6),
@@ -1011,14 +973,14 @@ class _ProfileinfoState extends State<Profileinfo> {
                               style: GoogleFonts.outfit(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color:
-                                    isSelected3D ? Colors.white : Colors.black,
+                                color: Colors.black,
                               ),
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
                       ),
+                     
                       SizedBox(width: screenWidth * 0.02),
                     ],
                   );
@@ -1026,7 +988,8 @@ class _ProfileinfoState extends State<Profileinfo> {
               ),
             ),
           ),
-          Container(
+        
+            Container(
             padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.06)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1053,29 +1016,18 @@ class _ProfileinfoState extends State<Profileinfo> {
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: dayTimes.map((label) {
-                  final bool isSelected3D = __selectedLabels3.contains(label);
+                children: studyMethods.map((label) {
                   return Row(
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            if (isSelected3D) {
-                              __selectedLabels3.remove(label);
-                            } else {
-                              __selectedLabels3.add(label);
-                            }
-                          });
-                        },
+                        onTap: () {},
                         child: Container(
                           padding: EdgeInsets.symmetric(
                               horizontal: (screenWidth * 0.05)),
                           height: 33,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: isSelected3D
-                                ? const Color(0XFF7C90D6)
-                                : Colors.white,
+                            color: Colors.white,
                             border: Border.all(
                               width: 1,
                               color: const Color(0XFF7C90D6),
@@ -1088,24 +1040,246 @@ class _ProfileinfoState extends State<Profileinfo> {
                               style: GoogleFonts.outfit(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                color:
-                                    isSelected3D ? Colors.white : Colors.black,
+                                color: Colors.black,
                               ),
                               textAlign: TextAlign.center,
                             ),
                           ),
                         ),
                       ),
+                      
                       SizedBox(width: screenWidth * 0.02),
                     ],
                   );
                 }).toList(),
               ),
+            ),),
+              Container(
+            padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.06)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Divider(
+                  thickness: 0,
+                  color: Colors.transparent,
+                ),
+                Text(
+                  "Communication Methods",
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
             ),
           ),
           SizedBox(
+            height: (screenHeight * 0.013),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.04)),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: communication.map((label) {
+                  return Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: (screenWidth * 0.05)),
+                          height: 33,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white,
+                            border: Border.all(
+                              width: 1,
+                              color: const Color(0XFF7C90D6),
+                            ),
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              label,
+                              style: GoogleFonts.outfit(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                      
+                      SizedBox(width: screenWidth * 0.02),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),),
+              Container(
+            padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.06)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Divider(
+                  thickness: 0,
+                  color: Colors.transparent,
+                ),
+                Text(
+                  "Academic Strength",
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: (screenHeight * 0.013),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.04)),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: strength.map((label) {
+                  return Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: (screenWidth * 0.05)),
+                          height: 33,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white,
+                            border: Border.all(
+                              width: 1,
+                              color: const Color(0XFF7C90D6),
+                            ),
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              label,
+                              style: GoogleFonts.outfit(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                      
+                      SizedBox(width: screenWidth * 0.02),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),),
+              Container(
+            padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.06)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Divider(
+                  thickness: 0,
+                  color: Colors.transparent,
+                ),
+                Text(
+                  "Skills",
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: (screenHeight * 0.013),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: (screenWidth * 0.04)),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: skills.map((label) {
+                  return Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: (screenWidth * 0.05)),
+                          height: 33,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white,
+                            border: Border.all(
+                              width: 1,
+                              color: const Color(0XFF7C90D6),
+                            ),
+                          ),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              label,
+                              style: GoogleFonts.outfit(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                      
+                      SizedBox(width: screenWidth * 0.02),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),),
+          SizedBox(
             height: (screenHeight * 0.2),
           ),
+            Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF7C90D6),
+                  borderRadius: BorderRadius.circular(40),
+                ),
+                child: MaterialButton(
+                  onPressed: () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            Modify(userID: widget.userID),
+                      ),
+                      (route) => false,
+                    );
+                  },
+                  height: 55,
+                  minWidth: 190,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                  child: Text(
+                    "Modify ABOUT YOU",
+                    style: GoogleFonts.outfit(
+                        textStyle: const TextStyle(color: Colors.white)),
+                  ),
+                ),
+              ),
+            ),
         ])));
   }
 
@@ -1114,9 +1288,7 @@ class _ProfileinfoState extends State<Profileinfo> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: GestureDetector(
-        onTap: hasArrow
-            ? onTap
-            : null, // Only make the row clickable if an arrow exists
+        onTap: hasArrow ? onTap : null,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

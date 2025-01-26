@@ -26,7 +26,6 @@ class _InforState extends State<Infor> {
 
   Future<void> _loadStudentProfile() async {
     try {
-      // Fetch the profile from Firestore using userID
       DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(widget.userID)
@@ -35,7 +34,7 @@ class _InforState extends State<Infor> {
       if (docSnapshot.exists) {
         setState(() {
           studentProfile = docSnapshot.data() as Map<String, dynamic>;
-          _extractSchoolName(); // Extract the school name after loading the profile
+          _extractSchoolName(); 
         });
       } else {
         print("User not found in Firestore.");
@@ -45,7 +44,7 @@ class _InforState extends State<Infor> {
     }
   }
 
-  void _extractSchoolName() {
+  Future<void> _extractSchoolName() async {
   if (studentProfile == null) {
     print('Student profile is null');
     return;
@@ -61,6 +60,10 @@ class _InforState extends State<Infor> {
     school = extractSchoolName(email);
     print('Extracted School Name: $school');
   });
+  DocumentReference userDocRef = FirebaseFirestore.instance.collection('users').doc(widget.userID);
+    await userDocRef.update({
+      'school': school,
+    });
 }
 
 
@@ -73,7 +76,7 @@ class _InforState extends State<Infor> {
       return domainParts[0];
     }
   }
-  return ''; // Return empty string for invalid email
+  return ''; 
 }
 
  

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stubudmvp/farial/field.dart';
 import 'package:stubudmvp/imad/exploreBuddiesPage.dart';
+import 'package:stubudmvp/imad/moreFilters.dart';
+import 'package:stubudmvp/interest1.dart';
+import 'package:stubudmvp/interest3.dart';
 
 class Filterpage extends StatefulWidget {
 
@@ -13,7 +17,7 @@ class Filterpage extends StatefulWidget {
 class _FilterpageState extends State<Filterpage> {
 
 
-  List<String> studyTimes = ["Morning", "Afternoon", "Evening"];
+  List<String> studyTimes = ["morning", "afternoon", "evening"];
   List<bool> selectedTimes = [false, true, false];
   List<String> selectedMethods = [];
   String purpose = "Study Group Sessions";
@@ -28,6 +32,14 @@ class _FilterpageState extends State<Filterpage> {
   List<String> selectedGoals = [];
   List<String> selectedCommunicationMethods = [];
   List<String> selectedAcademicStrenghts = [];
+  final selectedUni = 'any';
+  String selectedField = 'any';
+   List<String> selectedInterests = [];
+   List<String> selectedLanguages =[];
+
+   
+
+
   
   @override
   Widget build(BuildContext context) {
@@ -66,8 +78,8 @@ class _FilterpageState extends State<Filterpage> {
                   "distance": distance,
                   //"fieldOfStudy": fieldOfStudy,
                   //"educationLevel": educationLevel,
-                  //"interests": interests,
-                 // "languages": languages,
+                  "interests": selectedInterests,
+                  "languages": selectedLanguages,
                   "selectedStudyTimes": selectedStudyTimes,
                   "selectedStudyMethods": selectedStudyMethods,
                   "selectedGoals": selectedGoals,
@@ -220,8 +232,14 @@ class _FilterpageState extends State<Filterpage> {
               const SizedBox(height: 70),
 
               GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushNamed("field");
+                //! here, there will be a hidden button that shows only when a proper parameter is passed(something indicates that the user is logged in), therefore, hedik l method will be a  pop, popping the needed field.
+                //! all other on taps will be hidden, keep ghir the done
+                //! same goes for all others.
+                onTap: () async {
+               selectedField = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Field(userID: '1',)),
+              );
                 },
                 child: Container(
                   height: 40,
@@ -259,10 +277,13 @@ class _FilterpageState extends State<Filterpage> {
                   ),
                 ),
               ),
-
+              //! here since it does not exist, i have to implement page for schools fetching men feriel database,s amee logic
               GestureDetector(
-                onTap: () {
-                  print("object");
+                onTap: () async {
+               selectedField = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Field(userID: '1',)),
+              );
                 },
                 child: Container(
                   height: 40,
@@ -296,79 +317,121 @@ class _FilterpageState extends State<Filterpage> {
                   ),
                 ),
               ),
+GestureDetector(
+  onTap: () async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => InterestsPage(selectedFilterMethod: 'interests'),
+      ),
+    );
 
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  height: 40,
-                  width: double.infinity,
-                  alignment: Alignment.centerLeft,
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Color.fromARGB(50, 0, 0, 0),
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'interests',
-                        textAlign: TextAlign.start,
-                        style: GoogleFonts.outfit(
-                          color: const Color.fromARGB(50, 0, 0, 0),
-                        ),
-                      ),
-                      const Row(
-                        children: [
-                          Text('select'),
-                          Icon(Icons.arrow_forward_ios, size: 16),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+    // Update the selectedInterests if there are returned items
+    if (result != null && result is List<String>) {
+      setState(() {
+        selectedInterests = result;
+      });
+    }
+  },
+  child: Container(
+    height: 40,
+    width: double.infinity,
+    alignment: Alignment.centerLeft,
+    decoration: const BoxDecoration(
+      border: Border(
+        bottom: BorderSide(
+          color: Color.fromARGB(50, 0, 0, 0),
+          width: 1.0,
+        ),
+      ),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(
+            selectedInterests.isNotEmpty
+                ? selectedInterests.join(', ') // Display selected interests
+                : 'interests', // Default text
+            textAlign: TextAlign.start,
+            style: GoogleFonts.outfit(
+              color: selectedInterests.isNotEmpty
+                  ? Colors.black // Change color for selected text
+                  : const Color.fromARGB(50, 0, 0, 0),
+              fontSize: 14,
+            ),
+            overflow: TextOverflow.ellipsis, // Handle long text gracefully
+          ),
+        ),
+        const Row(
+          children: [
+            Text('select'),
+            Icon(Icons.arrow_forward_ios, size: 16),
+          ],
+        ),
+      ],
+    ),
+  ),
+),
 
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushNamed("field");
-                },
-                child: Container(
-                  height: 40,
-                  width: double.infinity,
-                  alignment: Alignment.centerLeft,
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Color.fromARGB(50, 0, 0, 0),
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'languages spoken',
-                        textAlign: TextAlign.start,
-                        style: GoogleFonts.outfit(
-                          color: const Color.fromARGB(50, 0, 0, 0),
-                        ),
-                      ),
-                      const Row(
-                        children: [
-                          Text('select'),
-                          Icon(Icons.arrow_forward_ios, size: 16),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 50),
+
+            GestureDetector(
+  onTap: () async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => InterestsPage(selectedFilterMethod: 'languages'),
+      ),
+    );
+
+    // Update the selectedInterests if there are returned items
+    if (result != null && result is List<String>) {
+      setState(() {
+        selectedLanguages = result;
+      });
+    }
+  },
+  child: Container(
+    height: 40,
+    width: double.infinity,
+    alignment: Alignment.centerLeft,
+    decoration: const BoxDecoration(
+      border: Border(
+        bottom: BorderSide(
+          color: Color.fromARGB(50, 0, 0, 0),
+          width: 1.0,
+        ),
+      ),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(
+            selectedInterests.isNotEmpty
+                ? selectedLanguages.join(', ') // Display selected interests
+                : 'languages spoken', // Default text
+            textAlign: TextAlign.start,
+            style: GoogleFonts.outfit(
+              color: selectedInterests.isNotEmpty
+                  ? Colors.black // Change color for selected text
+                  : const Color.fromARGB(50, 0, 0, 0),
+              fontSize: 14,
+            ),
+            overflow: TextOverflow.ellipsis, // Handle long text gracefully
+          ),
+        ),
+        const Row(
+          children: [
+            Text('select'),
+            Icon(Icons.arrow_forward_ios, size: 16),
+          ],
+        ),
+      ],
+    ),
+  ),
+),
+  const SizedBox(height: 50),
 
               Text("Study Times",
                   style: GoogleFonts.outfit(

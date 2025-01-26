@@ -1,117 +1,75 @@
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter/material.dart';
 
-Future<void> _fetchData({Map<String, dynamic>? appliedFilters}) async  {
-  setState(() {
-    _isLoading = true; // Show loading indicator while fetching data
-  });
-  int minAge = -1;
-  int maxAge = -1;
+class StickyTextOnScroll extends StatefulWidget {
+  @override
+  _StickyTextOnScrollState createState() => _StickyTextOnScrollState();
+}
 
-  try {
-    final loggedInUserDoc = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(widget.userID)
-        .get();
-    if (!loggedInUserDoc.exists) {
-      throw Exception("Logged-in user document not found");
-    }
+class _StickyTextOnScrollState extends State<StickyTextOnScroll> {
+  ScrollController _scrollController = ScrollController();
+  double _scrollOffset = 0;
 
-    List<String> friends =
-        List<String>.from(loggedInUserDoc.data()?['friendsList'] ?? []);
-    final currentUserLocation = loggedInUserDoc.data()?['location'];
-
-    Query query = FirebaseFirestore.instance.collection('users');
-
-    if (appliedFilters != null) {
-      if (appliedFilters.containsKey('gender') &&
-          appliedFilters['gender'].isNotEmpty) {
-        query = query.where('gender', isEqualTo: appliedFilters['gender']);
-      }
-      if (appliedFilters.containsKey('ageRange')) {
-        final RangeValues ageRange = appliedFilters['ageRange']; 
-        minAge = ageRange.start.toInt();
-        maxAge = ageRange.end.toInt();
-      }
-    }
-
-    final snapshot = await query.get();
-    final documents = snapshot.docs.where((doc) {
-      return doc.id != widget.userID && !friends.contains(doc.id);
-    }).toList();
-
-    _users = documents.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-
-      // Convert Firestore Timestamp to DateTime
-      DateTime? dateOfBirth;
-      int? age;
-      if (data.containsKey('dateOfBirth') && data['dateOfBirth'] != null) {
-        dateOfBirth = (data['dateOfBirth'] as Timestamp).toDate();
-
-        // Calculate age if dateOfBirth is valid
-        final now = DateTime.now();
-        age = now.year - dateOfBirth.year;
-
-        // Adjust age if the birthday hasn't occurred yet this year
-        if (now.month < dateOfBirth.month || 
-            (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
-          age--;
-        }
-      }
-
-      // Calculate distance if location data exists
-      double? distance;
-      if (currentUserLocation != null && data['location'] != null) {
-        final currentUserGeoPoint = currentUserLocation as GeoPoint;
-        final otherUserGeoPoint = data['location'] as GeoPoint;
-
-        // Calculate the distance between the two locations in meters
-        distance = await Geolocator.distanceBetween(
-          currentUserGeoPoint.latitude,
-          currentUserGeoPoint.longitude,
-          otherUserGeoPoint.latitude,
-          otherUserGeoPoint.longitude,
-        );
-      }
-
-      return {
-        'userID': doc.id,
-        'name': data['fullName'],
-        'bio': data['bio'],
-        'detail': 'Student at ${data['school']}',
-        'image': data['profilePic'] ?? 'default_image.jpg',
-        'interests': data['interests'] ?? [],
-        'academicStrengths': data['academic strengths'] ?? [],
-        'languagesSpoken': data['languagesSpoken'] ?? [],
-        'communicationMethods': data['communicationMethods'] ?? [],
-        'preferredStudyMethods': data['preferredStudyMethods'] ?? [],
-        'preferredStudyTimes': data['preferredStudyTimes'] ?? [],
-        'studyGoals': data['studyGoals'] ?? [],
-        'values': data['values'] ?? [],
-        'images': data['images'] ?? [],
-        'imagesSize': (data['images'] ?? []).length,
-        'dateOfBirth': data['dateOfBirth'] ?? [],
-        'age': age,
-        'distance': distance ?? 0.0, // Add distance field
-      };
-    }).toList();
-  } catch (e) {
-    print('Error fetching data: $e');
-  } finally {
-    setState(() {
-      _isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      setState(() {
+        _scrollOffset = _scrollController.offset;
+      });
     });
   }
 
-  if (minAge > 0 && maxAge > 0) {
-    _users = _users.where((user) {
-      return user['age'] >= minAge && user['age'] <= maxAge;
-    }).toList();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Sticky Text Example')),
+      body: Stack(
+        children: [
+          // Your scrollable content
+          CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 2000, // Large content to allow scrolling
+                  color: Colors.grey[300],
+                  child: Center(child: Text("Scroll Down")),
+                ),
+              ),
+            ],
+          ),
+          
+          // Sticky Text
+          Positioned(
+            bottom: _scrollOffset < 100 ? 100 : _scrollOffset, // Text becomes "sticky" after 100 pixels
+            left: 20,
+            child: Material(
+              elevation: 4, // Adds shadow to make it stand out
+              color: Colors.transparent,
+              child: Container(
+                padding: EdgeInsets.all(10),
+                color: Colors.blueAccent,
+                child: Text(
+                  "Sticky Text",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  print(_users);
-  print('after getting data from database, users list length is ${_users.length}');
-  if (_users.isEmpty) {
-    noMoreUsers = true;
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: StickyTextOnScroll(),
+  ));
 }

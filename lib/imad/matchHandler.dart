@@ -43,6 +43,10 @@ Future<bool> onSwipeButtonPressed(String currentUserId, String otherUserId) asyn
       // Return false to indicate no match
 
     }
+
+          await FirebaseFirestore.instance.collection('users').doc(currentUserId).update({
+        'slides': FieldValue.arrayUnion([otherUserId]),
+      });
           return isMatch;
   } catch (e) {
     print('Error processing swipe: $e');

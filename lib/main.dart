@@ -4,6 +4,7 @@ import 'package:stubudmvp/database/initialization.dart';
 import 'package:stubudmvp/farial/signIn.dart';
 import 'package:stubudmvp/imad/buddyProfile.dart';
 import 'package:stubudmvp/imad/deactivatedProfile.dart';
+import 'package:stubudmvp/imad/moreFilters.dart';
 import 'package:stubudmvp/login.dart';
 import 'package:flutter/material.dart';
 import 'package:stubudmvp/welcome.dart';
@@ -51,7 +52,7 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const Welcome(),
+      home:  Welcome(),
       theme: ThemeData(fontFamily: "Outfit"),
       routes: {
         "login": (context) => const Login(),

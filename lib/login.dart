@@ -26,75 +26,68 @@ class _LoginState extends State<Login> {
     _passwordController.dispose();
     super.dispose();
   }
-void _handleLogin(BuildContext context) async {
-  if (_formKey.currentState!.validate()) {
-    String emailOrUsername = _emailController.text.trim();
-    String password = _passwordController.text.trim();
 
-    try {
-     
-      QuerySnapshot emailQuery = await FirebaseFirestore.instance
-          .collection('users')
-          .where('email', isEqualTo: emailOrUsername)
-          .limit(1)
-          .get();
+  void _handleLogin(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      String emailOrUsername = _emailController.text.trim();
+      String password = _passwordController.text.trim();
 
-      QuerySnapshot usernameQuery = await FirebaseFirestore.instance
-          .collection('users')
-          .where('username', isEqualTo: emailOrUsername)
-          .limit(1)
-          .get();
+      try {
+        QuerySnapshot emailQuery = await FirebaseFirestore.instance
+            .collection('users')
+            .where('email', isEqualTo: emailOrUsername)
+            .limit(1)
+            .get();
 
-      var userSnapshot = emailQuery.docs.isNotEmpty
-          ? emailQuery.docs.first
-          : usernameQuery.docs.isNotEmpty
-              ? usernameQuery.docs.first
-              : null;
+        QuerySnapshot usernameQuery = await FirebaseFirestore.instance
+            .collection('users')
+            .where('username', isEqualTo: emailOrUsername)
+            .limit(1)
+            .get();
 
-      if (userSnapshot != null) {
-        Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>;
+        var userSnapshot = emailQuery.docs.isNotEmpty
+            ? emailQuery.docs.first
+            : usernameQuery.docs.isNotEmpty
+                ? usernameQuery.docs.first
+                : null;
 
-        if (userData['password'] == password) {
-          final userID = userSnapshot.id;
+        if (userSnapshot != null) {
+          Map<String, dynamic>? userData =
+              userSnapshot.data() as Map<String, dynamic>;
 
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => Explorebuddiespage(userID: userID),
-            ),
-            (route) => false,
-          );
+          if (userData['password'] == password) {
+            final userID = userSnapshot.id;
+
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (context) => Explorebuddiespage(userID: userID),
+              ),
+              (route) => false,
+            );
+          } else {
+            _showLoginError(context, "Incorrect username/email or password.");
+          }
         } else {
-          _showLoginError(context, "Incorrect username/email or password.");
+          _showLoginError(
+              context, "User not found. Please check your email or username.");
         }
-      } else {
-        _showLoginError(context, "User not found. Please check your email or username.");
+      } catch (e) {
+        print("Error during login: $e");
+        _showLoginError(
+            context, "An unexpected error occurred. Please try again.");
       }
-    } catch (e) {
-      print("Error during login: $e");
-      _showLoginError(context, "An unexpected error occurred. Please try again.");
     }
   }
-}
 
-void _showLoginError(BuildContext context, String message) {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text("Login Error"),
-      content: Text(message),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text("OK"),
-        ),
-      ],
-    ),
-  );
-}
-
-
+  void _showLoginError(BuildContext context, String errorMessage) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(errorMessage),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.redAccent,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
