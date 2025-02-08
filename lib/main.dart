@@ -1,33 +1,35 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stubudmvp/aiteur/screens/edit_account_info.dart';
-import 'package:stubudmvp/aiteur/screens/report.dart';
 import 'package:stubudmvp/bloc/change_password_bloc.dart';
 import 'package:stubudmvp/bloc/edit_username_bloc.dart';
 import 'package:stubudmvp/bloc/phone_number_bloc.dart';
-import 'package:stubudmvp/chatbud/chat_screen.dart';
-import 'package:stubudmvp/database/initialization.dart';
-import 'package:stubudmvp/farial/signIn.dart';
-import 'package:stubudmvp/imad/buddyProfile.dart';
-import 'package:stubudmvp/imad/deactivatedProfile.dart';
-import 'package:stubudmvp/login.dart';
+import 'package:stubudmvp/bloc/report_and_block_cubit.dart';
+import 'package:stubudmvp/services/database/initialization.dart';
+import 'package:stubudmvp/services/firebase_api.dart';
+import 'package:stubudmvp/views/screens/signup_login_screens/signIn.dart';
+import 'package:stubudmvp/views/screens/profile_and_filtering_screens/buddyProfile.dart';
+import 'package:stubudmvp/views/screens/profile_and_filtering_screens/deactivatedProfile.dart';
+import 'package:stubudmvp/views/screens/signup_login_screens/login.dart';
 import 'package:flutter/material.dart';
-import 'package:stubudmvp/welcome.dart';
+import 'package:stubudmvp/views/screens/welcome.dart';
 
-import 'package:stubudmvp/farial/profileInfo.dart';
-import 'package:stubudmvp/farial/more.dart';
-import 'package:stubudmvp/farial/blocked.dart';
+import 'package:stubudmvp/views/screens/signup_login_screens/more.dart';
 
 
-import 'package:stubudmvp/farial/causes.dart';
+import 'package:stubudmvp/views/screens/deleteProfile_screens/causes.dart';
 
-import 'package:stubudmvp/farial/sure.dart';
+import 'package:stubudmvp/views/screens/deleteProfile_screens/sure.dart';
 
-import 'database/db_helper.dart';
+import 'services/database/db_helper.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'constant/constant.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await Firebase.initializeApp();
+  await FirebaseApi().initNotifications();
   // Print the content of the StudentProfile table
+  
   await printTableContent('StudentProfile');
   await initializeData(); 
 
@@ -43,9 +45,18 @@ void main() async {
         BlocProvider<ChangePasswordBloc>(
           create: (_) => ChangePasswordBloc(), // Initialize PhoneNumberBloc
         ),
+        
+        BlocProvider<ReportBlockCubit>(
+           create: (_) => ReportBlockCubit(flaskBaseUrl),
+        )
       ],
+      
       child: const App(),
+
+
+
     ),);
+    
 }
 
 Future<void> printTableContent(String tableName) async {
@@ -84,27 +95,21 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-    debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: 'Outfit'),
+        routes: {
+      "login": (context) => const Login(),
+      "signin": (context) => const signIn(),
+      "mainpage": (context) => const DeactivatedProfileScreen(),
       
-      home: const Welcome(),
-      theme: ThemeData(fontFamily: "Outfit"),
-     routes: {
-  "login": (context) => const Login(),
-  "signin": (context) => const signIn(),
-  "mainpage": (context) => const DeactivatedProfileScreen(),
-  "report": (context) => ReportScreen(),
-  "chatpage": (context) => const ChatScreen(
-        name: "cc",
-        image: "images/profile .png",
-        initialMessages: [],
-      ),
-  "Explorebuddiespage": (context) => const buddyProfile(),
-  "ProfileInfo": (context) => const Profileinfo(),
-  "more": (context) => const More(),
-  "blocked": (context) => const Blocked(),
-  "causes": (context) => const Causes(),
-  "sure": (context) => const Sure(),
-},
+      
+          
+      "Explorebuddiespage": (context) => const buddyProfile(),
+      "more": (context) => const More(),
+      "causes": (context) => const Causes(),
+      "sure": (context) => const Sure(),
+    },
+    home: const Welcome(),
 
     );
   }

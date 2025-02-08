@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "942484274152",
+    "project_id": "stubud-e32d2",
+    "storage_bucket": "stubud-e32d2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:942484274152:android:48944d1dc7b9697e7b825d",
+        "android_client_info": {
+          "package_name": "com.example.stubudmvp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "942484274152-tld86e9hlabpf0ooas2i69fjaftfnv7a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCp8CD5H-NJgelGKO2zdxV1RUBzz3TZVRw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "942484274152-tld86e9hlabpf0ooas2i69fjaftfnv7a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

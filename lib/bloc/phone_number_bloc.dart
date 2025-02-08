@@ -1,45 +1,116 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stubudmvp/database/db_helper.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../constant/constant.dart';
 
 // Define the events
 abstract class PhoneNumberEvent {}
 
+class PhoneNumberUpdateRequested extends PhoneNumberEvent {
+  final String phoneNumber;
+  final String userId;
+
+  PhoneNumberUpdateRequested({required this.phoneNumber, required this.userId});
+}
+
+class PhoneNumberVerificationRequested extends PhoneNumberEvent {
+  final String email;
+
+  PhoneNumberVerificationRequested({required this.email});
+}
 
 // Define the states
-class PhoneNumberBloc extends Bloc<PhoneNumberEvent, String> {
-  PhoneNumberBloc() : super('');
+abstract class PhoneNumberState {}
 
-  @override
-    Future<void> updatePhoneNumber(String phoneNumber ,int userId) async {
+class PhoneNumberInitial extends PhoneNumberState {}
+
+class PhoneNumberLoading extends PhoneNumberState {}
+
+class PhoneNumberSuccess extends PhoneNumberState {
+  final String phoneNumber;
+  PhoneNumberSuccess(this.phoneNumber);
+}
+
+class PhoneNumberFailure extends PhoneNumberState {
+  final String errorMessage;
+  PhoneNumberFailure(this.errorMessage);
+}
+
+class PhoneNumberVerificationSuccess extends PhoneNumberState {}
+
+class PhoneNumberVerificationFailure extends PhoneNumberState {
+  final String errorMessage;
+  PhoneNumberVerificationFailure(this.errorMessage);
+}
+
+class PhoneNumberBloc extends Bloc<PhoneNumberEvent, PhoneNumberState> {
+  
+
+  PhoneNumberBloc() : super(PhoneNumberInitial()) {
+    on<PhoneNumberUpdateRequested>(_handlePhoneNumberUpdateRequested);
+    on<PhoneNumberVerificationRequested>(_handlePhoneNumberVerificationRequested);
+  }
+
+  // Function to validate phone number format
+  bool _isPhoneNumberValid(String phoneNumber) {
+    final phoneRegex = RegExp(r'^\d{10,15}$'); // E.164 format
+    return phoneRegex.hasMatch(phoneNumber);
+  }
+
+  // Handle the phone number update event
+  Future<void> _handlePhoneNumberUpdateRequested(
+      PhoneNumberUpdateRequested event, Emitter<PhoneNumberState> emit) async {
+    emit(PhoneNumberLoading());
+
     try {
-      final db = await DBHelper.getDatabase();
+      if (!_isPhoneNumberValid(event.phoneNumber)) {
+        emit(PhoneNumberFailure("Invalid phone number format"));
+        return;
+      }
 
-      // Update phone number in the database
-      await db.update(
-        'StudentProfile',
-        {'phoneNumber': phoneNumber},
-        where: 'userID = ?',
-        whereArgs: [userId], // Example dummy email, replace with current user's email
+      // Send the phone number update request to Flask backend
+      final response = await http.post(
+        Uri.parse('$flaskBaseUrl/update_phone_number'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'userId': event.userId,
+          'phoneNumber': event.phoneNumber,
+        }),
       );
 
-      // Emit the new username to the state
-      emit(phoneNumber);
+      if (response.statusCode == 200) {
+        emit(PhoneNumberSuccess(event.phoneNumber));
+      } else {
+        final error = jsonDecode(response.body)['error'];
+        emit(PhoneNumberFailure(error));
+      }
     } catch (e) {
-      print('Error updating username: $e');
+      emit(PhoneNumberFailure('Error updating phone number: $e'));
     }
   }
 
-  // Fetch the initial username (for example, from the database)
-  Future<void> loadUsername(int userID) async {
-    final db = await DBHelper.getDatabase();
-    List<Map<String, dynamic>> result = await db.query(
-      'StudentProfile',
-      where: 'userID = ?',
-      whereArgs: [userID], // Example dummy email
-      limit: 1,
-    );
-    if (result.isNotEmpty) {
-      emit(result.first['phoneNumber']);
+  // Handle email verification event
+  Future<void> _handlePhoneNumberVerificationRequested(
+      PhoneNumberVerificationRequested event, Emitter<PhoneNumberState> emit) async {
+    emit(PhoneNumberLoading());
+
+    try {
+      // Send email verification to the provided email via Flask
+      final response = await http.post(
+        Uri.parse('$flaskBaseUrl/send_verification_email'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': event.email}),
+      );
+
+      if (response.statusCode == 200) {
+        emit(PhoneNumberVerificationSuccess());
+      } else {
+        final error = jsonDecode(response.body)['error'];
+        emit(PhoneNumberVerificationFailure(error));
+      }
+    } catch (e) {
+      emit(PhoneNumberVerificationFailure('Error sending verification email: $e'));
     }
   }
 }
+

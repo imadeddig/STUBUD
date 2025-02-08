@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StudBud</string>
+    <string name="facebook_app_id">1148405630241681</string>
+    <string name="fb_login_protocol_scheme">fb1148405630241681</string>
+     <string name="facebook_client_token">16a68f41ce8bb38c071198f89d7156f7</string>
+
+
+</resources>
+
+

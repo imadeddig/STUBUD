@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../database/db_helper.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../constant/constant.dart';
 
 /// -------------------------------------
 /// EVENTS
@@ -40,7 +42,7 @@ class ConfirmPasswordChanged extends ChangePasswordEvent {
 }
 
 class SubmitChangePassword extends ChangePasswordEvent {
-  final int userID;
+  final String userID;
   final String currentPassword;
   final String newPassword;
   final String confirmPassword;
@@ -85,17 +87,19 @@ class ChangePasswordFailure extends ChangePasswordState {
 /// BLOC
 /// -------------------------------------
 class ChangePasswordBloc extends Bloc<ChangePasswordEvent, ChangePasswordState> {
+  
+
   ChangePasswordBloc() : super(ChangePasswordInitial()) {
     on<CurrentPasswordChanged>((event, emit) {
-      // Handle the current password logic if necessary
+      // Handle current password logic if necessary
     });
 
     on<NewPasswordChanged>((event, emit) {
-      // Handle the new password logic if necessary
+      // Handle new password logic if necessary
     });
 
     on<ConfirmPasswordChanged>((event, emit) {
-      // Handle the confirm password logic if necessary
+      // Handle confirm password logic if necessary
     });
 
     on<SubmitChangePassword>((event, emit) async {
@@ -104,41 +108,27 @@ class ChangePasswordBloc extends Bloc<ChangePasswordEvent, ChangePasswordState> 
       try {
         // Ensure passwords match
         if (event.newPassword != event.confirmPassword) {
-          emit(ChangePasswordFailure("New password and confirmation do not match."));
+          emit(const ChangePasswordFailure("New password and confirmation do not match."));
           return;
         }
 
-        final db = await DBHelper.getDatabase();
-
-        // Fetch the user record with the matching userID
-        final List<Map<String, dynamic>> users = await db.query(
-          'StudentProfile',
-          where: 'userID = ?',
-          whereArgs: [event.userID], // Querying by userID
+        // Send the password change request to Flask backend
+        final response = await http.post(
+          Uri.parse('$flaskBaseUrl/change_password'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode({
+            'userID': event.userID,
+            'currentPassword': event.currentPassword,
+            'newPassword': event.newPassword,
+          }),
         );
 
-        if (users.isEmpty) {
-          emit(ChangePasswordFailure("User not found."));
-          return;
+        if (response.statusCode == 200) {
+          emit(ChangePasswordSuccess());
+        } else {
+          final error = jsonDecode(response.body)['error'];
+          emit(ChangePasswordFailure(error));
         }
-
-        final storedPassword = users.first['password'];
-
-        // Check if currentPassword matches the stored password
-        if (event.currentPassword != storedPassword) {
-          emit(ChangePasswordFailure("Current password is incorrect."));
-          return;
-        }
-
-        // Update the password in the database
-        await db.update(
-          'StudentProfile',
-          {'password': event.newPassword},
-          where: 'userID = ?',
-          whereArgs: [event.userID],
-        );
-
-        emit(ChangePasswordSuccess());
       } catch (e) {
         emit(ChangePasswordFailure("An error occurred: ${e.toString()}"));
       }

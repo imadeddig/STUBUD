@@ -1,42 +1,55 @@
 import 'package:bloc/bloc.dart';
-import '../../database/db_helper.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../constant/constant.dart';
 
+class EditUsernameState {
+  final String username;
+  final String message;
 
-// BLoC class to manage username update
-class EditUsernameBloc extends Cubit<String> {
-  EditUsernameBloc() : super('');
+  EditUsernameState({required this.username, required this.message});
+}
 
-  // Function to update the username in the database and emit the new state
-  Future<void> updateUsername(String newUsername , int userID) async {
+class EditUsernameBloc extends Cubit<EditUsernameState> {
+  EditUsernameBloc() : super(EditUsernameState(username: '', message: ''));
+
+  
+
+  // Load the username from Flask backend
+  Future<void> loadUsername(String userID) async {
     try {
-      final db = await DBHelper.getDatabase();
+      final response = await http.get(Uri.parse('$flaskBaseUrl/get_username/$userID'));
 
-      // Update username in the database
-      await db.update(
-        'StudentProfile',
-        {'username': newUsername},
-        where: 'userID = ?',
-        whereArgs: [userID], // Example dummy email, replace with current user's email
-      );
-
-      // Emit the new username to the state
-      emit(newUsername);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        emit(EditUsernameState(username: data['username'], message: ''));
+      } else {
+        final error = jsonDecode(response.body)['error'];
+        emit(EditUsernameState(username: '', message: error));
+      }
     } catch (e) {
-      print('Error updating username: $e');
+      emit(EditUsernameState(username: '', message: 'Error loading username: $e'));
     }
   }
 
-  // Fetch the initial username (for example, from the database)
-  Future<void> loadUsername(int userID) async {
-    final db = await DBHelper.getDatabase();
-    List<Map<String, dynamic>> result = await db.query(
-      'StudentProfile',
-      where: 'userID = ?',
-      whereArgs: [userID], // Example dummy email
-      limit: 1,
-    );
-    if (result.isNotEmpty) {
-      emit(result.first['username']);
+  // Update the username via Flask backend
+  Future<void> updateUsername(String newUsername, String userID) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$flaskBaseUrl/update_username'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'userID': userID, 'username': newUsername}),
+      );
+
+      if (response.statusCode == 200) {
+        emit(EditUsernameState(username: newUsername, message: 'Username updated successfully!'));
+      } else {
+        final error = jsonDecode(response.body)['error'];
+        emit(EditUsernameState(username: '', message: error));
+      }
+    } catch (e) {
+      emit(EditUsernameState(username: '', message: 'Error updating username: $e'));
     }
   }
 }
+
